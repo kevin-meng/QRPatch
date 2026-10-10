@@ -68,6 +68,23 @@ await check("可用时执行原生 QR 解码",async()=>{
   if(!codes.some(x=>x.rawValue==="QRPATCH-E2E-01"))throw Error("QR detector could not decode the generated fixture");
   return "QRPATCH-E2E-01 decoded";
 });
+
+await check("裁切形状切换：圆形、圆角、方形",()=>{
+  const shapes=el("shapes"),btn=x=>shapes.querySelector('[data-shape="'+x+'"]');
+  for(const mode of ["circle","rounded","square"]){
+    btn(mode).click();eq(layer().shape,mode,"mask "+mode);
+    if(mode!=="rounded")near(layer().w,layer().h,"square aspect for "+mode);
+  }
+  return "3 shape modes";
+});
+await check("新建项目：重置画布与释放素材 URL",()=>{
+  const revoke=w.URL.revokeObjectURL.bind(w.URL);let count=0;
+  w.URL.revokeObjectURL=(url)=>{count++;return revoke(url)};
+  w.confirm=()=>true;el("reset").click();
+  const x=state();if(x.background||x.layers.length)throw Error("reset retained layers or background");
+  if(count<2)throw Error("old image URLs were not revoked");
+  return count+" object URLs released";
+});
 const failed=fail>0;document.querySelector("#summary").dataset.finished="true";document.querySelector("#summary").dataset.failed=String(fail);document.querySelector("#summary").style.borderColor=failed?"#e6aaa7":"#b3e3d1";say(failed?"fail":"pass",failed?"浏览器检查完成：存在失败项":"浏览器检查完成",pass+" PASS / "+fail+" FAIL / "+skip+" SKIP");
 })().catch(e=>{document.querySelector("#summary").dataset.finished="true";document.querySelector("#summary").dataset.failed="1";document.querySelector("#summary").textContent="QA 未能完成";document.querySelector("#log").textContent=String(e.stack||e)});
 </script></body></html>
