@@ -24,6 +24,15 @@ AI image generators can produce beautiful posters, but the QR codes they draw ar
 
 To explore the workspace without uploading a private image, select **体验示例画布** on the opening screen. Its example QR-like pattern is decorative and **not scannable**.
 
+## Editor workflow (current build)
+
+1. Upload the poster and the replacement image.
+2. Select the overlay on the poster, choose **square / circle / rounded** from the right panel. This activates **in-canvas crop mode**; the separate source-image crop dialog has been removed.
+3. Drag inside the selected overlay to reposition the image under its shape, and drag corner handles to resize the visible shape. Adjust **image zoom** independently in the inspector.
+4. Select **完成裁切，返回移动模式** to move the complete overlay around the poster, then export the PNG.
+
+For QR codes, prefer a square, complete image with a quiet zone; circle masks can destroy scanability. The crop mode currently requires interactive browser testing across mouse and touch devices.
+
 ## Features
 
 | Feature | Availability |
