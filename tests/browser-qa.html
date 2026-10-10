@@ -32,11 +32,41 @@ await check("整体模式：四角拖拽让图片与蒙版一起变化",()=>{con
 await check("整体模式：拖动图层时图片同步位移",()=>{const b=layer(),p={x:b.x+b.w*.5,y:b.y+b.h*.5};drag(p,{x:p.x+18,y:p.y+12});const a=layer();near(a.imageRect.x-b.imageRect.x,a.x-b.x,"image follows layer x");near(a.imageRect.y-b.imageRect.y,a.y-b.y,"image follows layer y")});
 let savedPNG=null;
 await check("原始分辨率 PNG 导出",async()=>{const orig=w.URL.createObjectURL.bind(w.URL);w.URL.createObjectURL=function(blob){if(blob?.type==="image/png")savedPNG=blob;return orig(blob)};el("export").click();await until(()=>savedPNG);const im=await w.createImageBitmap(savedPNG);eq(im.width,1000,"export width");eq(im.height,700,"export height");im.close();return "PNG 1000 × 700"});
-await check("真正二维码在 PNG 中可扫码（浏览器支持时）",async()=>{
-if(!("BarcodeDetector" in w)){skip++;pass--;return "SKIP: 当前浏览器不支持 BarcodeDetector，需用手机扫码复验"}
-const b=await uploadQR("qr-check-code.png");const bitmap=await w.createImageBitmap(savedPNG);bitmap.close();
-const orig=w.URL.createObjectURL.bind(w.URL);let blob=null;w.URL.createObjectURL=function(x){if(x?.type==="image/png")blob=x;return orig(x)};
-el("export").click();await until(()=>blob);const bm=await w.createImageBitmap(blob),cv=d.createElement("canvas");cv.width=cv.height=512;cv.getContext("2d").drawImage(bm,b.x,b.y,b.w,b.h,0,0,512,512);const detector=new w.BarcodeDetector({formats:["qr_code"]});const codes=await detector.detect(cv);bm.close();if(!codes.some(x=>x.rawValue==="QRPATCH-E2E-01"))throw Error("QR detection did not match fixture");return "Detected QRPATCH-E2E-01"
+let qrOutput=null,qrLayer=null;
+await check("导出的二维码矩阵保真（29 × 29 个模块）",async()=>{
+  qrLayer=await uploadQR("qr-check-code.png");
+  const sourceQR=qrLayer;
+  savedPNG=null;
+  el("export").click();
+  await until(()=>savedPNG);
+  qrOutput=savedPNG;
+  const bitmap=await w.createImageBitmap(qrOutput),out=d.createElement("canvas");
+  out.width=bitmap.width;out.height=bitmap.height;
+  const g=out.getContext("2d",{willReadFrequently:true});g.drawImage(bitmap,0,0);bitmap.close();
+  const padding=sourceQR.backing?sourceQR.padding/100:0;
+  const inner={x:sourceQR.x+sourceQR.w*padding,y:sourceQR.y+sourceQR.h*padding,
+    w:sourceQR.w*(1-2*padding),h:sourceQR.h*(1-2*padding)};
+  const side=Math.min(inner.w,inner.h);
+  const x0=inner.x+(inner.w-side)/2,y0=inner.y+(inner.h-side)/2;
+  const encoded="AAAAAAAAAAAAAAAAAAAA/hv4BBUQQC6uugF1RdALo66AQQUEA/qv4AAfAACCrnAFq1zAI72OAFIMkAt0UwAAbOAD+CFAEE9OALppMAXRbAAuke4BBILQD+seAAAAAAAAAAAAAAAAAAAAAA==";
+  const raw=atob(encoded);let errors=0;
+  for(let n=0;n<29*29;n++){
+    const bit=(raw.charCodeAt(n>>3)>>(7-(n%8)))&1;
+    const xx=Math.floor(x0+(n%29+.5)*side/29),yy=Math.floor(y0+(Math.floor(n/29)+.5)*side/29);
+    const rgba=g.getImageData(xx,yy,1,1).data,brightness=(rgba[0]+rgba[1]+rgba[2])/3;
+    if((bit&&brightness>105)||(!bit&&brightness<180))errors++;
+  }
+  if(errors)throw Error(errors+" / 841 modules are incorrect in export");
+  return "841 / 841 QR modules match fixture";
+});
+await check("可用时执行原生 QR 解码",async()=>{
+  if(!("BarcodeDetector" in w)){skip++;pass--;return "SKIP: browser does not support BarcodeDetector; pixel matrix verified separately"}
+  const bm=await w.createImageBitmap(qrOutput),cv=d.createElement("canvas");cv.width=cv.height=512;
+  cv.getContext("2d").drawImage(bm,qrLayer.x,qrLayer.y,qrLayer.w,qrLayer.h,0,0,512,512);
+  bm.close();const detector=new w.BarcodeDetector({formats:["qr_code"]});
+  const codes=await detector.detect(cv);
+  if(!codes.some(x=>x.rawValue==="QRPATCH-E2E-01"))throw Error("QR detector could not decode the generated fixture");
+  return "QRPATCH-E2E-01 decoded";
 });
 const failed=fail>0;document.querySelector("#summary").dataset.finished="true";document.querySelector("#summary").dataset.failed=String(fail);document.querySelector("#summary").style.borderColor=failed?"#e6aaa7":"#b3e3d1";say(failed?"fail":"pass",failed?"浏览器检查完成：存在失败项":"浏览器检查完成",pass+" PASS / "+fail+" FAIL / "+skip+" SKIP");
 })().catch(e=>{document.querySelector("#summary").dataset.finished="true";document.querySelector("#summary").dataset.failed="1";document.querySelector("#summary").textContent="QA 未能完成";document.querySelector("#log").textContent=String(e.stack||e)});
