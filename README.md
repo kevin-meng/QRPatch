@@ -15,7 +15,7 @@ QRPatch is an open-source, privacy-first browser image editor. Images stay on yo
 
 ## Status
 
-**Planning / requirements stage.** No application implementation has been shipped yet.
+**Initial editor implementation available.** Open `index.html` to try the client-side prototype. Browser QA is still pending; see [implementation status](docs/IMPLEMENTATION_STATUS.md).
 
 ## Documents
 
@@ -29,4 +29,4 @@ The initial release focuses on reliable *flat/axis-aligned* overlays. Perspectiv
 
 ## License
 
-A license has not yet been selected. Public visibility alone is not an open-source license; choose an OSI-approved license before inviting reuse or external contributions.
+MIT License. See [LICENSE](LICENSE).
