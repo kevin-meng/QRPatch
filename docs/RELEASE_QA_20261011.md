@@ -1,31 +1,56 @@
-# Release candidate QA — 2026-10-11
+# QRPatch — Alpha release verification (2026-10-11)
 
-## Scope
+## Verified on the public Render deployment
 
-Target: [QRPatch main](https://github.com/kevin-meng/QRPatch). The intended early version is `v0.1.0-alpha.1`, not a stable 1.0 release.
+**Editor:** https://qrpatch-studio.onrender.com
 
-## What was actually checked
+**Runnable browser QA:** https://qrpatch-studio.onrender.com/tests/browser-qa.html
 
-- A remote visual browser opened the [HTMLPreview URL](https://htmlpreview.github.io/?https://github.com/kevin-meng/QRPatch/blob/main/index.html).
-- The desktop layout rendered a header, two sidebars, upload controls, the central empty canvas, and the "体验示例画布" button.
-- No obvious overlapping components were observed in the initial empty state.
-- The interactive-browser tool **could not programmatically access the rendered element IDs** inside the HTMLPreview-hosted document. Consequently it **could not verify** the sample-canvas button, repositioning, clipping, PNG download, or scanability.
-- No downloadable screenshot file was returned by the remote browser; **no screenshot was committed**. Do not replace a real screenshot with an AI-generated mock.
+**Observed result:** **15 PASS / 0 FAIL / 1 SKIP**, tested through a live remote Chromium browser after commit `ad3314629e11150be867982bef5679af103ca278` was deployed on Render with status `Live`.
 
-## Code added during this pass
+| Test group | Observed result |
+| --- | --- |
+| Editor load, demo poster, floating toolbar | PASS |
+| Upload a real QR PNG from an in-memory fixture | PASS |
+| Enter crop mode without automatically clipping QR finder patterns / quiet zone | PASS |
+| Zoom source image independently of the crop mask | PASS |
+| Resize crop mask independently of source image | PASS |
+| Drag source image inside the mask | PASS |
+| Return to overall mode and scale image together with mask | PASS |
+| Drag overall frame corners; move the whole layer with source image | PASS |
+| Export original-size **1000 × 700** PNG | PASS |
+| Compare exported QR pixels against fixture's **29 × 29 = 841** modules | **PASS: 841 / 841 matched** |
+| Switch square, circle and rounded mask shapes | PASS |
+| Reset project and revoke old object URLs | PASS |
+| Decode the *exported* QR with native browser BarcodeDetector | **SKIP: unsupported in this browser** |
 
-- One-click, entirely local sample poster with a deliberately non-scannable **illustrative** QR pattern, to demonstrate layer selection and canvas operations. The demo source does not claim to be a valid QR.
-- The demo provides a clear path to interactive review without a real private poster.
+The fixture `QRPATCH-E2E-01` is a real QR image, not the decorative sample from the home-screen demo. Independent OpenCV decoding confirmed that the original generated fixture encodes `QRPATCH-E2E-01`. The online pixel-fidelity test confirms that exporting the unmodified QR overlay preserved **all sampled module centers**, but this is **not a substitute** for decoding the exported PNG with a camera or decoder.
 
-## Outstanding release blockers
+## Implementation and design changes
 
-- [ ] Test on a directly hosted static site or localhost (not an iframe-based HTMLPreview service).
-- [ ] Run background and actual QR upload, move, resize, crop and original-resolution PNG export.
-- [ ] Decode an exported known-good QR using a real QR scanner.
-- [ ] Capture an actual PNG full-page editor screenshot after opening the demo canvas; commit to `docs/assets/editor-preview.png` and link in README.
-- [ ] Test desktop and mobile layouts.
-- [ ] Create annotated Git tag `v0.1.0-alpha.1` only once above minimum checks pass (the connected GitHub action set does not expose a tag creation operation).
+- A contextual floating toolbar enables two clearly separated modes: **整体** scales/translates both source image and mask, **裁切** edits image pan/zoom and mask independently.
+- Image zoom and frame resize preserve image aspect ratio and keep the selected crop composition when moving between modes.
+- Normal QR overlays enter crop mode in **contain** fit with safety padding, rather than cover fit that may cut the QR.
+- Previous file object URLs are revoked when replacing the poster or resetting the project.
+- Test hooks are present only under `?qa=1`. Production UI remains local-only.
 
-## Screenshot rule
+## Evidence and reproduction
 
-Only commit a screenshot produced by a browser that actually rendered this version; do not use mockups or synthesized approximations.
+1. Open [the browser test runner](https://qrpatch-studio.onrender.com/tests/browser-qa.html) and review the final PASS/FAIL/SKIP totals and individual assertions.
+2. Run `node tests/transform-contract.mjs` to validate the transform geometry locally.
+3. For manual checking, upload your own test poster and known-valid QR in the [editor](https://qrpatch-studio.onrender.com), crop, switch to whole-mode resize, export, and scan the result with a phone.
+
+Browser QA dispatches pointer events to the actual editor canvas and reads the exported PNG. A human desktop mouse/touch-device visual acceptance pass has not been performed in every browser.
+
+## Remaining pre-release work
+
+- [x] Direct static deployment on Render.
+- [x] Real browser canvas interaction tests and PNG pixel-resolution test.
+- [x] Confirm the complete 29×29 QR fixture has been preserved in the exported PNG.
+- [ ] Decode an exported PNG with a QR scanner across representative poster sizes; test mobile touch and Safari.
+- [ ] Capture a persistent **real browser screenshot** of the editor with the demo active, commit to `docs/assets/editor-preview.png`, and link from README. The available browser automation did not return a persistable screenshot asset, so none has been fabricated.
+- [ ] Create a Git tag `v0.1.0-alpha.1` after the release artifacts are available. The connected GitHub actions here do not expose tag creation; a branch or documentation filename must not be passed off as a tag.
+
+## Safety notes
+
+The decorative QR-like illustration used by **体验示例画布** is intentionally non-scannable. Circle and rounded masks can impair QR decoding; QR content should normally remain complete and square, with a sufficiently large quiet zone. QR image edits stay inside the browser.
