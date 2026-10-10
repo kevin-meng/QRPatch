@@ -69,7 +69,9 @@ See [release QA and remaining verification](docs/RELEASE_QA_20261011.md). Manual
 
 [Open the browser preview](https://qrpatch-studio.onrender.com)
 
-The real browser has been exercised by the automated QA runner, but a **persistable page screenshot is still pending**. We will add `docs/assets/editor-preview.png` only after an actual browser screenshot can be exported. We intentionally do not use a fabricated design mock as a product screenshot.
+![QRPatch Studio — real editor screenshot](docs/assets/editor-preview.png)
+
+Screenshot generated from the actual QRPatch editor, with its demo canvas active. The demo's QR-like illustration is not scannable.
 
 ## Run locally
 
