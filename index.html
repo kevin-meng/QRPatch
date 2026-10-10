@@ -41,9 +41,9 @@
 "use strict";
 const $=id=>document.getElementById(id),ctx=$("canvas").getContext("2d");
 let background=null,layers=[],selected=null,history=[],future=[],drag=null,scale=1,seq=0,files=[],cropMode=false;
-const snap=()=>JSON.stringify({layers:layers.map(({image,url,...rest})=>rest),selected});
+const snap=()=>JSON.stringify({layers:layers.map(({image,url,...rest})=>rest),selected,cropMode});
 function commit(){history.push(snap());if(history.length>70)history.shift();future=[];updateHistory()}
-function restore(s){const old=new Map(layers.map(l=>[l.id,l]));const obj=JSON.parse(s);layers=obj.layers.map(l=>({...l,image:old.get(l.id)?.image||files.find(a=>a.id===l.assetId)?.image,url:old.get(l.id)?.url||files.find(a=>a.id===l.assetId)?.url}));selected=obj.selected;sync()}
+function restore(s){const old=new Map(layers.map(l=>[l.id,l]));const obj=JSON.parse(s);layers=obj.layers.map(l=>({...l,image:old.get(l.id)?.image||files.find(a=>a.id===l.assetId)?.image,url:old.get(l.id)?.url||files.find(a=>a.id===l.assetId)?.url}));selected=obj.selected;cropMode=!!obj.cropMode;sync()}
 function undo(){if(!history.length)return;future.push(snap());restore(history.pop());updateHistory()}
 function redo(){if(!future.length)return;history.push(snap());restore(future.pop());updateHistory()}
 function updateHistory(){$("undo").disabled=!history.length;$("redo").disabled=!future.length}
@@ -75,7 +75,7 @@ function draw(){if(!background)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRec
 function corners(l){return[{key:"nw",x:l.x,y:l.y},{key:"ne",x:l.x+l.w,y:l.y},{key:"sw",x:l.x,y:l.y+l.h},{key:"se",x:l.x+l.w,y:l.y+l.h}]}
 function point(e){const r=$("canvas").getBoundingClientRect();return{x:(e.clientX-r.left)/scale,y:(e.clientY-r.top)/scale}}
 function hit(x,y){for(let i=layers.length-1;i>=0;i--){const l=layers[i];if(l.visible&&x>=l.x&&y>=l.y&&x<=l.x+l.w&&y<=l.y+l.h)return l}return null}
-function ensureImageRect(l){if(l.imageRect)return;const pad=l.backing?Math.max(0,Math.min(.3,Number(l.padding??8)/100)):0;const bw=l.w*(1-2*pad),bh=l.h*(1-2*pad),ratio=l.image.naturalWidth/l.image.naturalHeight;const factor=Math.max(bw/l.image.naturalWidth,bh/l.image.naturalHeight);const w=l.image.naturalWidth*factor,h=l.image.naturalHeight*factor;l.imageRect={x:l.x+(l.w-w)/2,y:l.y+(l.h-h)/2,w,h};l.imageZoom=1;l.fit="cover"}
+function ensureImageRect(l){if(l.imageRect)return;const pad=l.backing?Math.max(0,Math.min(.3,Number(l.padding??8)/100)):0;const bw=l.w*(1-2*pad),bh=l.h*(1-2*pad),ratio=l.image.naturalWidth/l.image.naturalHeight;const qr=l.kind==="qr";const factor=(qr?Math.min:Math.max)(bw/l.image.naturalWidth,bh/l.image.naturalHeight);const w=l.image.naturalWidth*factor,h=l.image.naturalHeight*factor;l.imageRect={x:l.x+(l.w-w)/2,y:l.y+(l.h-h)/2,w,h};l.imageZoom=1;l.fit=l.kind==="qr"?"contain":"cover"}
 function startDrag(e){if(!background)return;const p=point(e),l=get();let handle=null;if(l){for(const c of corners(l)){if(Math.hypot(p.x-c.x,p.y-c.y)<12/scale){handle=c.key;break}}}const target=handle?l:hit(p.x,p.y);if(selected!==target?.id)cropMode=false;selected=target?.id||null;if(target){commit();drag={id:target.id,handle,mode:cropMode&&!handle?"crop":"move",start:p,orig:{x:target.x,y:target.y,w:target.w,h:target.h,img:target.imageRect?{...target.imageRect}:null}};$("stage").setPointerCapture(e.pointerId)}sync()}
 
 function frameTransformImage(img,oldFrame,newFrame){
@@ -192,6 +192,6 @@ background={...bg,width:1000,height:700,name:"QRPatch demo poster"};const id="as
 $("bgDrop").onclick=$("start").onclick=()=>$("bgInput").click();$("addDrop").onclick=()=>$("assetInput").click();$("bgInput").onchange=e=>setBackground(e.target.files[0]);$("assetInput").onchange=e=>addFiles([...e.target.files]);
 for(const id of ["bgDrop","addDrop"]){$(id).onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$(id).click()}}}
 const area=$("canvasArea");area.addEventListener("dragover",e=>{e.preventDefault();area.classList.add("dragover")});area.addEventListener("dragleave",()=>area.classList.remove("dragover"));area.addEventListener("drop",e=>{e.preventDefault();area.classList.remove("dragover");const list=[...e.dataTransfer.files].filter(f=>f.type.startsWith("image/"));if(background)addFiles(list);else setBackground(list[0])});
-$("showSettings").onclick=()=>$("settings").classList.add("open");$("closeSettings").onclick=()=>$("settings").classList.remove("open");window.addEventListener("resize",layout);updateHistory();
+$("showSettings").onclick=()=>$("settings").classList.add("open");$("closeSettings").onclick=()=>$("settings").classList.remove("open");window.addEventListener("resize",layout);if(new URLSearchParams(location.search).has("qa"))window.QRPatchQA={snapshot:()=>({cropMode,background:background?{width:background.width,height:background.height}:null,selected,layers:layers.map(l=>({id:l.id,name:l.name,kind:l.kind,shape:l.shape,x:l.x,y:l.y,w:l.w,h:l.h,imageRect:l.imageRect?{...l.imageRect}:null,imageZoom:l.imageZoom||1,backing:l.backing,padding:l.padding}))})};updateHistory();
 })();
 </script></body></html>
