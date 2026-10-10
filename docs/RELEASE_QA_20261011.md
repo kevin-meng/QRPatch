@@ -48,7 +48,7 @@ Browser QA dispatches pointer events to the actual editor canvas and reads the e
 - [x] Real browser canvas interaction tests and PNG pixel-resolution test.
 - [x] Confirm the complete 29×29 QR fixture has been preserved in the exported PNG.
 - [ ] Decode an exported PNG with a QR scanner across representative poster sizes; test mobile touch and Safari.
-- [ ] Capture a persistent **real browser screenshot** of the editor with the demo active, commit to `docs/assets/editor-preview.png`, and link from README. The available browser automation did not return a persistable screenshot asset, so none has been fabricated.
+- [ ] Capture and commit the **real editor screenshot** to `docs/assets/editor-preview.png` (not yet done). A reproducible capture helper is now available: `python scripts/capture-preview.py` after installing Python Playwright and Chromium; the helper opens the actual local `index.html`, loads the demo, saves the real screenshot, and adds the README image reference. The available remote browser did not expose a persistable screenshot asset.
 - [ ] Create a Git tag `v0.1.0-alpha.1` after the release artifacts are available. The connected GitHub actions here do not expose tag creation; a branch or documentation filename must not be passed off as a tag.
 
 ## Safety notes
