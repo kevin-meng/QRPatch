@@ -53,19 +53,23 @@ For real QR codes, prefer a square mask, uncut locator patterns, and a white qui
 
 ## Verification
 
-The geometry transform contract is reproducible without dependencies:
+QRPatch includes a real, self-running browser test suite that exercises the deployed editor with an in-memory QR fixture, pointer dragging, both editing modes and a PNG export.
+
+**[Run the interactive browser QA](https://qrpatch-studio.onrender.com/tests/browser-qa.html)** — most recent observed result: **15 PASS · 0 FAIL · 1 SKIP**. All **841 / 841 QR modules** were preserved in the exported PNG. The skipped case is native QR decoding, which requires `BarcodeDetector` support or an external scanner.
+
+The geometry transform contract also runs without dependencies:
 
 ```bash
 node tests/transform-contract.mjs
 ```
 
-The script checks whole-layer scaling after crop, mask-only editing, independent image zoom, and required toolbar controls. Browser-level pointer dragging and final QR scanability still require separate verification.
+See [release QA and remaining verification](docs/RELEASE_QA_20261011.md). Manual touch-device QA and independent scanning of the exported image are still pending.
 
 ## Preview
 
 [Open the browser preview](https://qrpatch-studio.onrender.com)
 
-A verified, downloadable screenshot of the actual editor has **not yet been captured**. We will add `docs/assets/editor-preview.png` only after an actual browser screenshot can be exported. We intentionally do not use a fabricated design mock as a product screenshot.
+The real browser has been exercised by the automated QA runner, but a **persistable page screenshot is still pending**. We will add `docs/assets/editor-preview.png` only after an actual browser screenshot can be exported. We intentionally do not use a fabricated design mock as a product screenshot.
 
 ## Run locally
 
