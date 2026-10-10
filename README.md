@@ -22,6 +22,8 @@ AI image generators can produce beautiful posters, but the QR codes they draw ar
 
 **1. Upload** an AI-generated poster → **2. Replace** incorrect QR graphics with your real QR image → **3. Export** as PNG at the original image resolution.
 
+To explore the workspace without uploading a private image, select **体验示例画布** on the opening screen. Its example QR-like pattern is decorative and **not scannable**.
+
 ## Features
 
 | Feature | Availability |
@@ -64,6 +66,7 @@ No account, AI API, build step, or image upload server is required.
 - [Technical architecture](docs/TECHNICAL_DESIGN.md)
 - [Roadmap](docs/ROADMAP.md)
 - [Implementation status](docs/IMPLEMENTATION_STATUS.md)
+- [Release QA and blockers](docs/RELEASE_QA_20261011.md)
 - [Changelog](CHANGELOG.md)
 - [Contributing](CONTRIBUTING.md)
 
