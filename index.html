@@ -54,14 +54,81 @@ function point(e){const r=$("canvas").getBoundingClientRect();return{x:(e.client
 function hit(x,y){for(let i=layers.length-1;i>=0;i--){const l=layers[i];if(l.visible&&x>=l.x&&y>=l.y&&x<=l.x+l.w&&y<=l.y+l.h)return l}return null}
 function ensureImageRect(l){if(l.imageRect)return;const pad=l.backing?Math.max(0,Math.min(.3,Number(l.padding??8)/100)):0;const bw=l.w*(1-2*pad),bh=l.h*(1-2*pad),ratio=l.image.naturalWidth/l.image.naturalHeight;const factor=Math.max(bw/l.image.naturalWidth,bh/l.image.naturalHeight);const w=l.image.naturalWidth*factor,h=l.image.naturalHeight*factor;l.imageRect={x:l.x+(l.w-w)/2,y:l.y+(l.h-h)/2,w,h};l.imageZoom=1;l.fit="cover"}
 function startDrag(e){if(!background)return;const p=point(e),l=get();let handle=null;if(l){for(const c of corners(l)){if(Math.hypot(p.x-c.x,p.y-c.y)<12/scale){handle=c.key;break}}}const target=handle?l:hit(p.x,p.y);if(selected!==target?.id)cropMode=false;selected=target?.id||null;if(target){commit();drag={id:target.id,handle,mode:cropMode&&!handle?"crop":"move",start:p,orig:{x:target.x,y:target.y,w:target.w,h:target.h,img:target.imageRect?{...target.imageRect}:null}};$("stage").setPointerCapture(e.pointerId)}sync()}
-function moveDrag(e){if(!drag)return;const p=point(e),l=get();if(!l)return;const dx=p.x-drag.start.x,dy=p.y-drag.start.y,o=drag.orig;if(!drag.handle){if(drag.mode==="crop"){ensureImageRect(l);const a=o.img||l.imageRect;l.imageRect={...a,x:a.x+dx,y:a.y+dy}}else{l.x=Math.round(o.x+dx);l.y=Math.round(o.y+dy);if(o.img)l.imageRect={...o.img,x:o.img.x+dx,y:o.img.y+dy}}}else{let left=o.x,top=o.y,right=o.x+o.w,bottom=o.y+o.h;if(drag.handle.includes("w"))left=Math.min(right-12,o.x+dx);else right=Math.max(left+12,o.x+o.w+dx);if(drag.handle.includes("n"))top=Math.min(bottom-12,o.y+dy);else bottom=Math.max(top+12,o.y+o.h+dy);let w=right-left,h=bottom-top;if(l.lock){const ratio=o.w/o.h;if(w/h>ratio)w=h*ratio;else h=w/ratio;if(drag.handle.includes("w"))left=right-w;else right=left+w;if(drag.handle.includes("n"))top=bottom-h;else bottom=top+h}l.x=Math.round(left);l.y=Math.round(top);l.w=Math.round(w);l.h=Math.round(h)}draw();properties()}
+
+function frameTransformImage(img,oldFrame,newFrame){
+  // Whole-layer mode treats the image and mask as one composed element.
+  // A uniform factor preserves image aspect ratio, even for unlocked rounded frames.
+  if(!img)return null;
+  const sx=newFrame.w/oldFrame.w,sy=newFrame.h/oldFrame.h;
+  const factor=Math.abs(sx-sy)<.0001?sx:Math.sqrt(Math.max(.0001,sx*sy));
+  const oldCX=oldFrame.x+oldFrame.w/2,oldCY=oldFrame.y+oldFrame.h/2;
+  const newCX=newFrame.x+newFrame.w/2,newCY=newFrame.y+newFrame.h/2;
+  const w=img.w*factor,h=img.h*factor;
+  return {x:newCX+(img.x+img.w/2-oldCX)*factor-w/2,
+          y:newCY+(img.y+img.h/2-oldCY)*factor-h/2,w,h};
+}
+function applyFrame(l,oldFrame,newFrame,maskOnly){
+  l.x=Math.round(newFrame.x);l.y=Math.round(newFrame.y);
+  l.w=Math.max(12,Math.round(newFrame.w));l.h=Math.max(12,Math.round(newFrame.h));
+  if(!maskOnly&&oldFrame.img){
+    l.imageRect=frameTransformImage(oldFrame.img,oldFrame,l);
+  }
+}
+function moveDrag(e){
+  if(!drag)return;
+  const p=point(e),l=get();if(!l)return;
+  const dx=p.x-drag.start.x,dy=p.y-drag.start.y,o=drag.orig;
+  if(!drag.handle){
+    if(drag.mode==="crop"){
+      ensureImageRect(l);
+      const img=o.img||l.imageRect;
+      l.imageRect={...img,x:img.x+dx,y:img.y+dy};
+    }else{
+      l.x=Math.round(o.x+dx);l.y=Math.round(o.y+dy);
+      if(o.img)l.imageRect={...o.img,x:o.img.x+dx,y:o.img.y+dy};
+    }
+  }else{
+    let left=o.x,top=o.y,right=o.x+o.w,bottom=o.y+o.h;
+    if(drag.handle.includes("w"))left=Math.min(right-12,o.x+dx);
+    else right=Math.max(left+12,o.x+o.w+dx);
+    if(drag.handle.includes("n"))top=Math.min(bottom-12,o.y+dy);
+    else bottom=Math.max(top+12,o.y+o.h+dy);
+    let w=right-left,h=bottom-top;
+    if(l.lock){
+      const ratio=o.w/o.h;
+      if(w/h>ratio)w=h*ratio;else h=w/ratio;
+      if(drag.handle.includes("w"))left=right-w;else right=left+w;
+      if(drag.handle.includes("n"))top=bottom-h;else bottom=top+h;
+    }
+    applyFrame(l,o,{x:left,y:top,w,h},cropMode);
+  }
+  draw();properties();
+}
+
 function endDrag(){drag=null;renderLayers()}
 function sync(){renderLayers();properties();draw();updateHistory()}
 function renderLayers(){$("layerCount").textContent=layers.length;const holder=$("layers");holder.replaceChildren();for(const l of [...layers].reverse()){const b=document.createElement("div");b.className="layer"+(selected===l.id?" active":"");b.setAttribute("role","button");b.tabIndex=0;const img=document.createElement("img");img.className="thumb";img.src=l.url;img.alt="";const copy=document.createElement("div");copy.className="layer-copy";const nm=document.createElement("div");nm.className="layer-name";nm.textContent=l.name;const typ=document.createElement("div");typ.className="layer-type";typ.textContent=l.kind==="qr"?"二维码素材":"图片素材";copy.append(nm,typ);const eye=document.createElement("button");eye.className="layer-eye";eye.title=l.visible?"隐藏图层":"显示图层";eye.textContent=l.visible?"◉":"◌";eye.onclick=e=>{e.stopPropagation();commit();l.visible=!l.visible;sync()};b.append(img,copy,eye);b.onclick=()=>{selected=l.id;sync()};b.onkeydown=e=>{if(e.key==="Enter"){selected=l.id;sync()}};holder.append(b)}}
 function properties(){const l=get();$("properties").hidden=!l;$("noSelection").hidden=!!l;if(!l)return;for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]])$(id).value=Math.round(l[k]);$("lock").checked=l.lock;$("backing").checked=l.backing;$("fit").value=l.fit||"contain";$("padding").value=l.padding??8;$("offsetX").value=l.offsetX??0;$("offsetY").value=l.offsetY??0;$("imageZoom").value=Math.round((l.imageZoom||1)*100);$("zoomValue").textContent=Math.round((l.imageZoom||1)*100)+"%";$("toggleCrop").textContent=cropMode?"✓ 完成裁切，返回移动模式":"✂ 调整图片内部裁切";document.querySelectorAll("#shapes button").forEach(b=>b.classList.toggle("selected",b.dataset.shape===l.shape));$("cropWarning").textContent=l.shape==="circle"?"注意：圆形裁切可能破坏二维码，请仅用于头像、Logo 或装饰图片。":"二维码建议保持完整方形，避免裁掉定位点导致无法扫描。"}
 function mutate(fn){const l=get();if(!l)return;commit();fn(l);sync()}
-for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]])$(id).addEventListener("change",e=>mutate(l=>{const n=Number(e.target.value);if(!Number.isFinite(n))return;const v=k==="w"||k==="h"?Math.max(1,n):n;if(l.lock&&!cropMode&&(k==="w"||k==="h")){if(k==="w")l.h=Math.max(1,Math.round(v*l.h/l.w));else l.w=Math.max(1,Math.round(v*l.w/l.h))}l[k]=v}));
-$("shapes").onclick=e=>{const b=e.target.closest("button[data-shape]");if(b)mutate(l=>{ensureImageRect(l);l.shape=b.dataset.shape;cropMode=true;if(l.shape==="circle"||l.shape==="square"){const side=Math.min(l.w,l.h);l.w=side;l.h=side;l.lock=true}if(l.shape==="circle")status("圆形裁切仅适合非二维码素材；二维码扫码能力可能受损。")})};
+for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]]){
+  $(id).addEventListener("change",e=>mutate(l=>{
+    const n=Number(e.target.value);if(!Number.isFinite(n))return;
+    const old={x:l.x,y:l.y,w:l.w,h:l.h,img:l.imageRect?{...l.imageRect}:null};
+    const next={x:l.x,y:l.y,w:l.w,h:l.h};
+    next[k]=(k==="w"||k==="h")?Math.max(12,n):n;
+    if(l.lock&&(k==="w"||k==="h")){
+      if(k==="w")next.h=next.w*old.h/old.w;
+      else next.w=next.h*old.w/old.h;
+    }
+    if(k==="x"||k==="y"){
+      l[k]=Math.round(next[k]);
+      if(!cropMode&&old.img)l.imageRect={...old.img,x:old.img.x+(l.x-old.x),y:old.img.y+(l.y-old.y)};
+    }else{
+      applyFrame(l,old,next,cropMode);
+    }
+  }));
+}
+$("shapes").onclick=e=>{const b=e.target.closest("button[data-shape]");if(b)mutate(l=>{ensureImageRect(l);l.shape=b.dataset.shape;cropMode=true;if(l.shape==="circle"||l.shape==="square"){const side=Math.min(l.w,l.h),cx=l.x+l.w/2,cy=l.y+l.h/2;l.x=cx-side/2;l.y=cy-side/2;l.w=side;l.h=side;l.lock=true}if(l.shape==="circle")status("圆形裁切仅适合非二维码素材；二维码扫码能力可能受损。")})};
 $("toggleCrop").onclick=()=>{if(!get())return;cropMode=!cropMode;if(cropMode)mutate(l=>ensureImageRect(l));else sync()};$("imageZoom").oninput=e=>{const l=get();if(!l)return;ensureImageRect(l);const next=Number(e.target.value)/100,prev=l.imageZoom||1,ratio=next/prev,cx=l.x+l.w/2,cy=l.y+l.h/2;l.imageRect={x:cx+(l.imageRect.x-cx)*ratio,y:cy+(l.imageRect.y-cy)*ratio,w:Math.max(1,l.imageRect.w*ratio),h:Math.max(1,l.imageRect.h*ratio)};l.imageZoom=next;$("zoomValue").textContent=e.target.value+"%";draw()};$("imageZoom").onpointerdown=()=>{if(get())commit()};$("imageZoom").onchange=()=>sync();
 $("lock").onchange=e=>mutate(l=>l.lock=e.target.checked);
 $("backing").onchange=e=>mutate(l=>l.backing=e.target.checked);$("fit").onchange=e=>mutate(l=>l.fit=e.target.value);$("padding").onchange=e=>mutate(l=>l.padding=Math.max(0,Math.min(30,Number(e.target.value)||0)));for(const [id,key] of [["offsetX","offsetX"],["offsetY","offsetY"]])$(id).onchange=e=>mutate(l=>l[key]=Math.max(-100,Math.min(100,Number(e.target.value)||0)));
