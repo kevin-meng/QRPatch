@@ -6,7 +6,7 @@
 
 Replace broken QR codes in AI-generated images. Fast, precise, private.
 
-[Try the editor](https://htmlpreview.github.io/?https://github.com/kevin-meng/QRPatch/blob/main/index.html) · [Product principles](docs/PRODUCT_PRINCIPLES.md) · [Report an issue](https://github.com/kevin-meng/QRPatch/issues)
+[Try the editor](https://qrpatch-studio.onrender.com) · [Product principles](docs/PRODUCT_PRINCIPLES.md) · [Report an issue](https://github.com/kevin-meng/QRPatch/issues)
 
 </div>
 
@@ -24,14 +24,17 @@ AI image generators can produce beautiful posters, but the QR codes they draw ar
 
 To explore the workspace without uploading a private image, select **体验示例画布** on the opening screen. Its example QR-like pattern is decorative and **not scannable**.
 
-## Editor workflow (current build)
+## Two clear editing modes
 
-1. Upload the poster and the replacement image.
-2. Select the overlay on the poster, choose **square / circle / rounded** from the right panel. This activates **in-canvas crop mode**; the separate source-image crop dialog has been removed.
-3. Drag inside the selected overlay to reposition the image under its shape, and drag corner handles to resize the visible shape. Adjust **image zoom** independently in the inspector.
-4. Select **完成裁切，返回移动模式** to move the complete overlay around the poster, then export the PNG.
+1. **整体 (Whole layer):** Drag to move the layer. Drag a corner to resize the mask **and** its image together, preserving the chosen crop.
+2. **裁切 (Crop):** Drag the image to reframe the contents; drag a corner to resize **only the mask**. Zoom the image independently.
+3. Use the small contextual toolbar beside the selected image — `整体 | 裁切 | 图片 − 100% ＋` — or the right inspector to switch modes. The image zoom differs from the canvas viewport zoom.
 
-For QR codes, prefer a square, complete image with a quiet zone; circle masks can destroy scanability. The crop mode currently requires interactive browser testing across mouse and touch devices.
+The original uploaded image is shown outside the mask with a faint preview **only while crop-editing**; export always includes only the selected masked area.
+
+For real QR codes, prefer a square mask, uncut locator patterns, and a white quiet zone. Circular masks are for photos, avatars, and decoration.
+
+[Detailed transform behavior and test contract](docs/TRANSFORM_SPEC.md) · [Run geometry tests](tests/transform-contract.mjs)
 
 ## Features
 
@@ -40,17 +43,27 @@ For QR codes, prefer a square, complete image with a quiet zone; circle masks ca
 | Local-only PNG / JPG / WebP uploads | ✅ |
 | Multiple draggable and resizable image overlays | ✅ |
 | Crop masks: rectangle, rounded rectangle and circle | ✅ |
-| Contain / cover fit, adjustable backing / padding, crop offsets | ✅ |
+| Independent crop-mask resize and image pan/zoom; whole-layer scaling | ✅ |
 | Layer ordering, undo / redo, keyboard nudging | ✅ |
 | Export PNG at background image pixel dimensions | ✅ |
 | Automatic QR scan validation | Planned |
-| Interactive crop-content drag, QR auto detection | Planned |
+| Browser-based automated pointer drag regression test | Planned |
 
 > **QR safety:** Keep QR symbols square with sufficient white quiet zone; do not circle-crop QR finder patterns. Circular masks are intended for photos, avatars and decorations. Export scanability is not yet automatically verified.
 
+## Verification
+
+The geometry transform contract is reproducible without dependencies:
+
+```bash
+node tests/transform-contract.mjs
+```
+
+The script checks whole-layer scaling after crop, mask-only editing, independent image zoom, and required toolbar controls. Browser-level pointer dragging and final QR scanability still require separate verification.
+
 ## Preview
 
-[Open the browser preview](https://htmlpreview.github.io/?https://github.com/kevin-meng/QRPatch/blob/main/index.html)
+[Open the browser preview](https://qrpatch-studio.onrender.com)
 
 A verified, downloadable screenshot of the actual editor has **not yet been captured**. We will add `docs/assets/editor-preview.png` only after an actual browser screenshot can be exported. We intentionally do not use a fabricated design mock as a product screenshot.
 
