@@ -42,7 +42,7 @@ def main():
             browser.close()
             if failures != "0":
                 raise SystemExit("QRPatch browser QA failed: " + summary)
-            if "15 通过" not in summary:
+            if "20 通过" not in summary:
                 raise SystemExit("Browser QA unexpectedly skipped required test assertions: " + summary)
     finally:
         server.shutdown()
