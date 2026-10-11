@@ -54,6 +54,21 @@ def main():
             OUT.parent.mkdir(parents=True, exist_ok=True)
             page.screenshot(path=str(OUT), full_page=True, animations="disabled")
             print(f"Captured actual editor: {OUT} ({OUT.stat().st_size} bytes)")
+            mobile = browser.new_context(
+                viewport={"width": 390, "height": 844},
+                screen={"width": 390, "height": 844},
+                device_scale_factor=2,
+                is_mobile=True,
+                has_touch=True,
+            )
+            mpage = mobile.new_page()
+            mpage.goto(url, wait_until="load")
+            mpage.get_by_role("button", name="体验示例画布").click()
+            mpage.locator("#quickTools:visible").wait_for()
+            mobile_out = ROOT / "docs" / "assets" / "editor-mobile-preview.png"
+            mpage.screenshot(path=str(mobile_out), full_page=True, animations="disabled")
+            print(f"Captured mobile editor: {mobile_out} ({mobile_out.stat().st_size} bytes)")
+            mobile.close()
             browser.close()
     finally:
         server.shutdown()
