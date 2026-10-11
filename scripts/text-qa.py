@@ -43,12 +43,23 @@ def verify_desktop(browser, url):
     start_poster(p)
     before_layer_count=len(snapshot(p)["layers"])
     assert before_layer_count==1
+    # Prevent silent truncation: five input lines must be rejected, never partially rendered.
+    p.locator("#textContent").fill("第一行\n第二行\n第三行\n第四行\n第五行")
+    p.locator("#addText").click()
+    assert len(snapshot(p)["layers"])==1,"A fifth line was silently added/truncated"
+    assert "最多支持 4 行" in p.locator("#status").inner_text()
+    with p.expect_download(timeout=10000) as baseline_dl:
+        p.locator("#export").click()
+    baseline=Path(baseline_dl.value.path()).read_bytes()
     content="扫码报名\n加入头马"
     item=create_text(p,content,"white-card","#ec3341")
     assert item["text"]==content and item["textStyle"]=="white-card"
     assert item["color"]=="#ec3341"
     assert item["w"]>30 and item["h"]>30
     assert item["lock"] is True
+    out=ROOT/"tests"/"out"
+    out.mkdir(parents=True,exist_ok=True)
+    p.screenshot(path=str(out/"text-layer-desktop.png"),full_page=True,animations="disabled")
     assert len(snapshot(p)["layers"])==2
     assert p.locator("#textInspector").is_visible()
     assert p.locator("#imageInspector").is_hidden()
@@ -89,6 +100,7 @@ def verify_desktop(browser, url):
     d=dl.value
     raw=Path(d.path()).read_bytes()
     assert png_dimensions(raw)==(1000,700),png_dimensions(raw)
+    assert raw!=baseline,"Adding text did not change exported PNG"
     # Layer order, duplication, removal and undo are inherited from layer system.
     p.locator("#duplicate").click()
     assert len([x for x in snapshot(p)["layers"] if x["kind"]=="text"])==2
@@ -113,6 +125,8 @@ def verify_presets_and_mobile(browser,url,w,h):
         assert selected_text(p)["textStyle"]==style
         assert not p.locator("#quickShape").is_visible()
     assert len([x for x in snapshot(p)["layers"] if x["kind"]=="text"])==5
+    (ROOT/"tests"/"out").mkdir(parents=True,exist_ok=True)
+    p.screenshot(path=str(ROOT/"tests"/"out"/f"text-layer-mobile-{w}.png"),full_page=True,animations="disabled")
     # The text preview persists as a vector text layer in export.
     p.locator("#export").click()
     p.locator("#saveSheet:visible").wait_for(timeout=12000)
