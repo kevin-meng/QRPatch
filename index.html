@@ -151,7 +151,7 @@ function positionQuickTools(){
  $("bgBrightnessLabel").textContent=bgEdits.brightness+"%";$("bgContrastLabel").textContent=bgEdits.contrast+"%";
  if(!background||$("stage").hidden){t.hidden=true;bt.hidden=true;return}
  bt.hidden=!!(l&&l.visible)||!backgroundSelected;
- if(!l||!l.visible){t.hidden=true;return}
+ if(!l||!l.visible){t.hidden=true;if(!bt.hidden&&!window.matchMedia("(max-width:650px)").matches){bt.style.left="50%";bt.style.top="12px";bt.style.transform="translateX(-50%)"}return}
  t.hidden=false;
  $("quickMove").classList.toggle("active",!cropMode);
  $("quickCrop").classList.toggle("active",cropMode);
@@ -173,7 +173,7 @@ function corners(l){return[{key:"nw",x:l.x,y:l.y},{key:"ne",x:l.x+l.w,y:l.y},{ke
 function point(e){const r=$("canvas").getBoundingClientRect();return{x:(e.clientX-r.left)/scale,y:(e.clientY-r.top)/scale}}
 function hit(x,y){for(let i=layers.length-1;i>=0;i--){const l=layers[i];if(l.visible&&x>=l.x&&y>=l.y&&x<=l.x+l.w&&y<=l.y+l.h)return l}return null}
 function ensureImageRect(l){if(l.imageRect)return;const pad=l.backing?Math.max(0,Math.min(.3,Number(l.padding??8)/100)):0;const bw=l.w*(1-2*pad),bh=l.h*(1-2*pad),ratio=l.image.naturalWidth/l.image.naturalHeight;const qr=l.kind==="qr";const factor=(qr?Math.min:Math.max)(bw/l.image.naturalWidth,bh/l.image.naturalHeight);const w=l.image.naturalWidth*factor,h=l.image.naturalHeight*factor;l.imageRect={x:l.x+(l.w-w)/2,y:l.y+(l.h-h)/2,w,h};l.imageZoom=1;l.fit=l.kind==="qr"?"contain":"cover"}
-function startDrag(e){if(!background)return;const p=point(e),l=get();let handle=null;if(l){for(const c of corners(l)){if(Math.hypot(p.x-c.x,p.y-c.y)<12/scale){handle=c.key;break}}}const target=handle?l:hit(p.x,p.y);if(selected!==target?.id)cropMode=false;selected=target?.id||null;backgroundSelected=!target;closeQuickMenus();if(target){commit();drag={id:target.id,handle,mode:cropMode&&!handle?"crop":"move",start:p,orig:{x:target.x,y:target.y,w:target.w,h:target.h,img:target.imageRect?{...target.imageRect}:null}};$("stage").setPointerCapture(e.pointerId)}sync()}
+function startDrag(e){if(!background)return;const p=point(e),l=get();let handle=null;if(l){for(const c of corners(l)){if(Math.hypot(p.x-c.x,p.y-c.y)<(window.matchMedia("(max-width:650px)").matches?19:12)/scale){handle=c.key;break}}}const target=handle?l:hit(p.x,p.y);if(selected!==target?.id)cropMode=false;selected=target?.id||null;backgroundSelected=!target;closeQuickMenus();if(target){commit();drag={id:target.id,handle,mode:cropMode&&!handle?"crop":"move",start:p,orig:{x:target.x,y:target.y,w:target.w,h:target.h,img:target.imageRect?{...target.imageRect}:null}};$("stage").setPointerCapture(e.pointerId)}sync()}
 
 function frameTransformImage(img,oldFrame,newFrame){
   // Whole-layer mode treats the image and mask as one composed element.
@@ -299,7 +299,7 @@ $("layerDown").onclick=()=>mutate(l=>{const i=layers.indexOf(l);if(i>0)[layers[i
 $("delete").onclick=()=>mutate(l=>{layers=layers.filter(a=>a.id!==l.id);selected=null});
 $("duplicate").onclick=()=>mutate(l=>{const copy={...l,id:"layer-"+(++seq),name:l.name+" 副本",x:l.x+22,y:l.y+22,imageRect:l.imageRect?{...l.imageRect,x:l.imageRect.x+22,y:l.imageRect.y+22}:null};layers.push(copy);selected=copy.id});
 $("stage").addEventListener("pointerdown",startDrag);$("stage").addEventListener("pointermove",moveDrag);$("stage").addEventListener("pointerup",endDrag);$("stage").addEventListener("pointercancel",endDrag);
-window.addEventListener("keydown",e=>{const t=e.target;if(t.matches("input,textarea,select"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo();return}const l=get();if(!l)return;if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();$("delete").click()}if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();mutate(x=>{const d=e.shiftKey?10:1,dx=e.key==="ArrowLeft"?-d:e.key==="ArrowRight"?d:0,dy=e.key==="ArrowUp"?-d:e.key==="ArrowDown"?d:0;if(cropMode){ensureImageRect(x);x.imageRect.x+=dx;x.imageRect.y+=dy}else{x.x+=dx;x.y+=dy;if(x.imageRect){x.imageRect.x+=dx;x.imageRect.y+=dy}}})}});
+window.addEventListener("keydown",e=>{if(!$("saveSheet").hidden)return;const t=e.target;if(t.matches("input,textarea,select"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo();return}const l=get();if(!l)return;if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();$("delete").click()}if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();mutate(x=>{const d=e.shiftKey?10:1,dx=e.key==="ArrowLeft"?-d:e.key==="ArrowRight"?d:0,dy=e.key==="ArrowUp"?-d:e.key==="ArrowDown"?d:0;if(cropMode){ensureImageRect(x);x.imageRect.x+=dx;x.imageRect.y+=dy}else{x.x+=dx;x.y+=dy;if(x.imageRect){x.imageRect.x+=dx;x.imageRect.y+=dy}}})}});
 $("undo").onclick=undo;$("redo").onclick=redo;
 let saveObjectUrl=null,saveBlob=null,saveName="";
 function closeSaveSheet(){
