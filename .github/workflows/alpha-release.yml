@@ -35,15 +35,19 @@ jobs:
       - name: Verify real editor interactions and PNG export in Chromium
         run: python scripts/browser-qa.py
 
+      - name: Verify mobile 390px/320px toolbar and PNG save workflow
+        run: python scripts/mobile-qa.py
+
       - name: Capture REAL browser editor screenshot
         run: python scripts/capture-preview.py
 
       - name: Commit verified screenshot and updated README
         run: |
           test -s docs/assets/editor-preview.png
+          test -s docs/assets/editor-mobile-preview.png
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs/assets/editor-preview.png README.md
+          git add docs/assets/editor-preview.png docs/assets/editor-mobile-preview.png README.md
           if git diff --staged --quiet; then
             echo "Screenshot already committed"
           else
@@ -53,7 +57,7 @@ jobs:
 
       - name: Tag tested alpha snapshot
         run: |
-          tag="v0.1.0-alpha.2"
+          tag="v0.1.0-alpha.3"
           if git ls-remote --tags origin "refs/tags/$tag" | grep -q "refs/tags/$tag"; then
             echo "Alpha tag exists; retaining the existing immutable release"
           else
