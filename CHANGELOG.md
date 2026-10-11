@@ -1,5 +1,13 @@
 # Changelog
 
+## [Unreleased] — Mobile PNG download simplification (2026-10-11)
+
+- Removed `分享 / 存到相册` from the mobile export sheet because WeChat can block system sharing.
+- The preview now has a single **下载 PNG** button. Kept the original-resolution export and adjusted helper text to accurately describe browser download limitations.
+- Removed Web Share API invocation and all share-to-Photos/WeChat guidance.
+- Added a mobile regression assertion that only one export action is displayed and PNG download still works.
+
+
 ## [v0.1.0-alpha.3] — Mobile editing & export (2026-10-11)
 
 ### Fixed
