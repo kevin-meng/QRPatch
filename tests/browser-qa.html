@@ -111,7 +111,7 @@ async function renderedPixels(){
   const bmp=await w.createImageBitmap(savedPNG),can=d.createElement("canvas");
   can.width=bmp.width;can.height=bmp.height;const g=can.getContext("2d",{willReadFrequently:true});
   g.drawImage(bmp,0,0);bmp.close();
-  const b=state().background,a=state().layers.find(l=>l.kind==="qr" && l.visible);
+  const b=state().background,a=state().layers.find(l=>l.kind==="qr");
   const ix=Math.floor(a.x+a.w*.5),iy=Math.floor(a.y+a.h*.5);
   return {
     bg:[...g.getImageData(50,50,1,1).data],
