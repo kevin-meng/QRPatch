@@ -69,13 +69,93 @@ await check("可用时执行原生 QR 解码",async()=>{
   return "QRPATCH-E2E-01 decoded";
 });
 
-await check("裁切形状切换：圆形、圆角、方形",()=>{
-  const shapes=el("shapes"),btn=x=>shapes.querySelector('[data-shape="'+x+'"]');
+await check("悬浮菜单：形状选择替代右侧重复设置",()=>{
+  if(el("shapes")||el("toggleCrop"))throw Error("redundant shape/sidebar controls remain");
+  if(!el("quickShape")||!el("shapePopover"))throw Error("context shape selector missing");
+  const pop=el("shapePopover"),btn=x=>pop.querySelector('[data-shape="'+x+'"]');
   for(const mode of ["circle","rounded","square"]){
-    btn(mode).click();eq(layer().shape,mode,"mask "+mode);
+    el("quickShape").click();
+    if(pop.hidden)throw Error("shape menu did not open");
+    btn(mode).click();
+    eq(layer().shape,mode,"mask "+mode);
+    if(!pop.hidden)throw Error("shape menu did not dismiss");
     if(mode!=="rounded")near(layer().w,layer().h,"square aspect for "+mode);
   }
   return "3 shape modes";
+});
+await check("悬浮更多：复制、删除和白底入口",()=>{
+  const before=state().layers.length;
+  el("quickMore").click();
+  if(el("morePopover").hidden)throw Error("more options did not open");
+  el("quickDuplicate").click();
+  eq(state().layers.length,before+1,"duplicated overlay");
+  el("quickMore").click();
+  el("quickBacking").click();
+  el("quickMore").click();
+  el("quickDelete").click();
+  eq(state().layers.length,before,"removed duplicate");
+  return "duplicate, backing toggle and remove";
+});
+await check("点击海报空白处显示背景悬浮工具条",()=>{
+  const stage=el("stage"),canvas=el("canvas"),bounds=canvas.getBoundingClientRect();
+  const event=new w.PointerEvent("pointerdown",{bubbles:true,pointerId:123,isPrimary:true,
+    pointerType:"mouse",clientX:bounds.left+20,clientY:bounds.top+20,buttons:1});
+  stage.dispatchEvent(event);
+  if(!state().backgroundSelected)throw Error("background not selected");
+  if(!el("quickTools").hidden)throw Error("layer toolbar still visible");
+  if(el("bgTools").hidden)throw Error("background toolbar hidden");
+  if(!el("bgReplace")||!el("bgAdjust")||!el("bgReset"))throw Error("missing background actions");
+});
+async function renderedPixels(){
+  savedPNG=null;el("export").click();await until(()=>savedPNG);
+  const bmp=await w.createImageBitmap(savedPNG),can=d.createElement("canvas");
+  can.width=bmp.width;can.height=bmp.height;const g=can.getContext("2d",{willReadFrequently:true});
+  g.drawImage(bmp,0,0);bmp.close();
+  const b=state().background,a=state().layers.find(l=>l.kind==="qr" && l.visible);
+  const ix=Math.floor(a.x+a.w*.5),iy=Math.floor(a.y+a.h*.5);
+  return {
+    bg:[...g.getImageData(50,50,1,1).data],
+    qr:[...g.getImageData(ix,iy,1,1).data],
+    dimensions:[can.width,can.height]
+  };
+}
+await check("背景亮度对比度只改变底图、不影响 QR 图层及导出尺寸",async()=>{
+  const before=await renderedPixels();
+  el("bgAdjust").click();if(el("bgPopover").hidden)throw Error("adjustment panel hidden");
+  const brightness=el("bgBrightness"),contrast=el("bgContrast");
+  brightness.value="130";brightness.dispatchEvent(new w.Event("input",{bubbles:true}));
+  brightness.dispatchEvent(new w.Event("change",{bubbles:true}));
+  contrast.value="115";contrast.dispatchEvent(new w.Event("input",{bubbles:true}));
+  contrast.dispatchEvent(new w.Event("change",{bubbles:true}));
+  eq(state().bgEdits.brightness,130,"brightness");
+  eq(state().bgEdits.contrast,115,"contrast");
+  const after=await renderedPixels();
+  if(before.bg.every((v,i)=>v===after.bg[i]))throw Error("background pixel did not change");
+  if(before.qr.some((v,i)=>v!==after.qr[i]))throw Error("QR pixel changed when only background adjusted");
+  eq(after.dimensions[0],1000,"export width");
+  eq(after.dimensions[1],700,"export height");
+  return "background adjusted, QR pixels unchanged";
+});
+await check("背景重置调色恢复原样",async()=>{
+  el("bgReset").click();
+  eq(state().bgEdits.brightness,100,"brightness reset");
+  eq(state().bgEdits.contrast,100,"contrast reset");
+  if(!el("bgPopover").hidden)throw Error("panel not closed");
+});
+await check("同尺寸更换背景保留所有二维码图层",async()=>{
+  const before=state().layers.map(l=>({id:l.id,x:l.x,y:l.y,w:l.w,h:l.h}));
+  const cv=d.createElement("canvas");cv.width=1000;cv.height=700;
+  const g=cv.getContext("2d");g.fillStyle="#80a0bb";g.fillRect(0,0,1000,700);
+  const blob=await new Promise(ok=>cv.toBlob(ok,"image/png"));
+  const dt=new w.DataTransfer();
+  dt.items.add(new w.File([blob],"replacement-background.png",{type:"image/png"}));
+  el("bgInput").files=dt.files;
+  el("bgInput").dispatchEvent(new w.Event("change",{bubbles:true}));
+  await until(()=>el("docName").textContent==="replacement-background.png");
+  const after=state().layers.map(l=>({id:l.id,x:l.x,y:l.y,w:l.w,h:l.h}));
+  if(JSON.stringify(before)!==JSON.stringify(after))throw Error("layers or coordinates changed");
+  if(!state().backgroundSelected)throw Error("background toolbar selection was not kept");
+  return before.length+" layer(s) preserved";
 });
 await check("新建项目：重置画布与释放素材 URL",()=>{
   const revoke=w.URL.revokeObjectURL.bind(w.URL);let count=0;
