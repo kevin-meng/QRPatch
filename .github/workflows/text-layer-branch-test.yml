@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - feat/text-annotation-layers
+      - feat/text-context-toolbar-ux
 
 permissions:
   contents: read
