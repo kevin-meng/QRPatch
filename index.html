@@ -36,6 +36,8 @@
 .selection-tools .tool-popover .text-edit-buttons button{border:1px solid #e3e7f0;background:#fff;padding:9px 13px}
 .selection-tools .tool-popover .text-edit-buttons button.active{background:#365be8;color:#fff;border-color:#365be8}
 .selection-tools #textEditPopover{width:min(320px,calc(100vw - 30px));min-width:250px}
+.selection-tools .text-validation{font-size:11px;color:#bf3044;text-align:left;margin:6px 1px 0;white-space:normal}
+.selection-tools .text-validation[hidden]{display:none}
 .selection-tools #textStylePopover{width:265px;min-width:220px}
 .selection-tools #textColorPopover{width:260px;min-width:210px}
 
@@ -156,6 +158,7 @@
 <div class="tool-popover" id="textEditPopover" hidden role="group" aria-label="编辑文字内容">
 <label class="field" for="quickTextValue">修改文字</label>
 <textarea class="text-entry" id="quickTextValue" maxlength="80" rows="3" placeholder="输入文字，最多四行"></textarea>
+<p id="textEditFeedback" class="text-validation" role="status" aria-live="polite" hidden></p>
 <div class="text-edit-buttons">
 <button type="button" id="quickTextCancel">取消</button>
 <button type="button" class="active" id="quickTextApply">应用修改</button>
@@ -345,28 +348,48 @@ document.querySelector(".text-colors").addEventListener("click",e=>{
  const b=e.target.closest("button[data-color]");if(!b)return;
  $("textColor").value=b.dataset.color;$("textColor").dispatchEvent(new Event("input",{bubbles:true}));
 });
+function reflowTextLayer(l,nextText,nextStyle){
+ if(l.kind!=="text")return;
+ const cx=l.x+l.w/2,cy=l.y+l.h/2;
+ const sx=l.w/l.baseW,sy=l.h/l.baseH;
+ const style=nextStyle||l.textStyle,text=nextText??l.text;
+ const sz=measureTextGeometry(text,style);
+ l.text=text;l.name=text.replace(/\n/g," ").slice(0,22);l.textStyle=style;
+ l.baseW=sz.baseW;l.baseH=sz.baseH;
+ l.w=Math.max(12,sz.baseW*sx);l.h=Math.max(12,sz.baseH*sy);
+ l.x=cx-l.w/2;l.y=cy-l.h/2;
+}
+function validateTextDraft(raw){
+ const value=String(raw||"").trim();
+ if(!value)return {error:"请先输入文字"};
+ if(value.split("\n").length>4)return {error:"文字最多支持 4 行"};
+ return {value};
+}
 $("textEditContent").onchange=e=>{
  const l=get();if(!l||l.kind!=="text")return;
- const value=e.target.value.trim();
- if(!value){e.target.value=l.text;status("文字不能留空");return}
- if(value.split("\n").length>4){e.target.value=l.text;status("文字最多支持 4 行，请精简后再更新");return}
- if(value===l.text)return;
- mutate(x=>{
-  const oldBaseW=x.baseW,oldBaseH=x.baseH;
-  const sz=measureTextGeometry(value,x.textStyle);
-  x.text=value;x.name=value.replace(/\n/g," ").slice(0,22);
-  x.baseW=sz.baseW;x.baseH=sz.baseH;
-  // Maintain the user's existing visual scale and center when text content changes.
-  const newW=x.w*sz.baseW/oldBaseW,newH=x.h*sz.baseH/oldBaseH;
-  x.x+=(x.w-newW)/2;x.y+=(x.h-newH)/2;x.w=newW;x.h=newH;
- });
+ const draft=validateTextDraft(e.target.value);
+ if(draft.error){e.target.value=l.text;status(draft.error);return}
+ if(draft.value===l.text)return;
+ mutate(x=>reflowTextLayer(x,draft.value));
 };
+
 
 function paint(g,editing){g.clearRect(0,0,background.width,background.height);g.save();g.filter=`brightness(${bgEdits.brightness}%) contrast(${bgEdits.contrast}%)`;g.drawImage(background.image,0,0,background.width,background.height);g.restore();for(const l of layers){if(!l.visible)continue;if(l.kind==="text"){drawTextLayer(g,l);if(editing&&selected===l.id)drawTextSelection(g,l);continue}if(!l.image)continue;g.save();shapePath(g,l);g.clip();if(l.backing){g.fillStyle="#fff";g.fillRect(l.x,l.y,l.w,l.h)}const pad=l.backing?Math.min(.3,Math.max(0,Number(l.padding??8)/100)):0;const inner={x:l.x+l.w*pad,y:l.y+l.h*pad,w:l.w*(1-2*pad),h:l.h*(1-2*pad)};if(l.imageRect){const a=l.imageRect;g.drawImage(l.image,a.x,a.y,a.w,a.h)}else{const crop=l.crop||{x:0,y:0,w:1,h:1};const src={x:crop.x*l.image.naturalWidth,y:crop.y*l.image.naturalHeight,w:crop.w*l.image.naturalWidth,h:crop.h*l.image.naturalHeight};const iw=src.w,ih=src.h,aspect=iw/ih,boxAspect=inner.w/inner.h;if((l.fit||"contain")==="cover"){const t=Math.max(inner.w/iw,inner.h/ih),dw=iw*t,dh=ih*t;g.drawImage(l.image,src.x,src.y,src.w,src.h,inner.x+(inner.w-dw)/2,inner.y+(inner.h-dh)/2,dw,dh)}else{const t=Math.min(inner.w/iw,inner.h/ih),dw=iw*t,dh=ih*t;g.drawImage(l.image,src.x,src.y,src.w,src.h,inner.x+(inner.w-dw)/2,inner.y+(inner.h-dh)/2,dw,dh)}}g.restore();if(editing&&selected===l.id){g.save();if(cropMode){ensureImageRect(l);const a=l.imageRect;g.save();g.beginPath();g.rect(0,0,background.width,background.height);if(l.shape==="circle")g.ellipse(l.x+l.w/2,l.y+l.h/2,l.w/2,l.h/2,0,0,Math.PI*2);else if(l.shape==="rounded")g.roundRect(l.x,l.y,l.w,l.h,Math.min(l.w,l.h)*.12);else g.rect(l.x,l.y,l.w,l.h);g.clip("evenodd");g.globalAlpha=.34;g.drawImage(l.image,a.x,a.y,a.w,a.h);g.restore();g.strokeStyle="#f6a946";g.lineWidth=1.4/scale;g.setLineDash([7/scale,4/scale]);g.strokeRect(a.x,a.y,a.w,a.h);g.setLineDash([]);g.fillStyle="#4767ed18";shapePath(g,l);g.fill()}g.strokeStyle="#4c67ed";g.lineWidth=2/scale;g.setLineDash([5/scale,3/scale]);g.strokeRect(l.x,l.y,l.w,l.h);g.setLineDash([]);if(cropMode){g.strokeStyle="#f3f6ff";g.lineWidth=3/scale;shapePath(g,l);g.stroke();g.strokeStyle="#4569f2";g.lineWidth=1.6/scale;shapePath(g,l);g.stroke()}for(const p of corners(l)){g.beginPath();g.fillStyle="#fff";g.strokeStyle="#4c67ed";g.lineWidth=2/scale;g.roundRect(p.x-5/scale,p.y-5/scale,10/scale,10/scale,2/scale);g.fill();g.stroke()}g.restore()}}}
 function positionQuickTools(){
  const t=$("quickTools"),bt=$("bgTools"),l=get();
- t.classList.toggle("text-layer-selected",l?.kind==="text");
+  t.classList.toggle("text-layer-selected",l?.kind==="text");
+ t.setAttribute("aria-label",l?.kind==="text"?"文字快捷编辑":"图片快捷编辑");
  $("quickMove").textContent=l?.kind==="text"?"↗ 移动缩放":"↗ 整体";
+ if(l?.kind==="text"){
+   $("quickTextColorPicker").value=l.color||"#182c5c";
+   for(const b of $("quickTextStyles").querySelectorAll("button[data-quick-text-style]")){
+     const isCurrent=b.dataset.quickTextStyle===l.textStyle;
+     b.classList.toggle("chosen",isCurrent);b.setAttribute("aria-checked",String(isCurrent));
+   }
+   for(const b of $("textColorPopover").querySelectorAll("button[data-quick-color]")){
+     b.classList.toggle("chosen",b.dataset.quickColor===(l.color||"#182c5c"));
+   }
+ }
  $("bgBrightness").value=bgEdits.brightness;$("bgContrast").value=bgEdits.contrast;
  $("bgBrightnessLabel").textContent=bgEdits.brightness+"%";$("bgContrastLabel").textContent=bgEdits.contrast+"%";
  if(!background||$("stage").hidden){t.hidden=true;bt.hidden=true;return}
@@ -526,10 +549,64 @@ $("quickTools").addEventListener("pointerdown",e=>e.stopPropagation());
 $("quickTools").addEventListener("pointermove",e=>e.stopPropagation());
 $("quickTools").addEventListener("pointerup",e=>e.stopPropagation());
 
-function closeQuickMenus(){for(const [panel,trigger] of [["shapePopover","quickShape"],["morePopover","quickMore"],["bgPopover","bgAdjust"]]){const p=$(panel);p.hidden=true;$(trigger).setAttribute("aria-expanded","false")}}
+function closeQuickMenus(){
+ for(const [panel,trigger] of [["shapePopover","quickShape"],["morePopover","quickMore"],["bgPopover","bgAdjust"],
+  ["textEditPopover","quickTextEdit"],["textStylePopover","quickTextStyle"],["textColorPopover","quickTextColor"]]){
+  const p=$(panel);p.hidden=true;$(trigger).setAttribute("aria-expanded","false");
+ }
+ $("textEditFeedback").hidden=true;
+}
 function toggleQuickMenu(panel,trigger){const willOpen=$(panel).hidden;closeQuickMenus();$(panel).hidden=!willOpen;$(trigger).setAttribute("aria-expanded",String(willOpen))}
 $("quickShape").onclick=()=>toggleQuickMenu("shapePopover","quickShape");
 $("quickMore").onclick=()=>toggleQuickMenu("morePopover","quickMore");
+$("quickTextEdit").onclick=()=>{
+ const l=get();if(!l||l.kind!=="text")return;
+ const opening=$("textEditPopover").hidden;
+ toggleQuickMenu("textEditPopover","quickTextEdit");
+ if(opening){
+  $("quickTextValue").value=l.text;
+  $("textEditFeedback").hidden=true;
+  $("quickTextValue").focus();
+ }
+};
+$("quickTextStyle").onclick=()=>{
+ if(get()?.kind!=="text")return;
+ toggleQuickMenu("textStylePopover","quickTextStyle");
+};
+$("quickTextColor").onclick=()=>{
+ if(get()?.kind!=="text")return;
+ toggleQuickMenu("textColorPopover","quickTextColor");
+};
+$("quickTextCancel").onclick=()=>closeQuickMenus();
+$("quickTextApply").onclick=()=>{
+ const l=get();if(!l||l.kind!=="text"){closeQuickMenus();return}
+ const draft=validateTextDraft($("quickTextValue").value);
+ if(draft.error){$("textEditFeedback").textContent=draft.error;$("textEditFeedback").hidden=false;return}
+ if(draft.value!==l.text)mutate(x=>reflowTextLayer(x,draft.value));
+ closeQuickMenus();
+};
+$("quickTextValue").addEventListener("keydown",e=>{
+ if((e.metaKey||e.ctrlKey)&&e.key==="Enter"){e.preventDefault();$("quickTextApply").click()}
+});
+$("quickTextStyles").onclick=e=>{
+ const b=e.target.closest("button[data-quick-text-style]");
+ const l=get();if(!b||!l||l.kind!=="text"||!TEXT_STYLES[b.dataset.quickTextStyle])return;
+ if(l.textStyle!==b.dataset.quickTextStyle)mutate(x=>reflowTextLayer(x,null,b.dataset.quickTextStyle));
+ closeQuickMenus();
+};
+$("textColorPopover").onclick=e=>{
+ const b=e.target.closest("button[data-quick-color]");
+ const l=get();if(!b||!l||l.kind!=="text")return;
+ const color=b.dataset.quickColor;
+ if(l.color!==color)mutate(x=>x.color=color);
+ closeQuickMenus();
+};
+$("quickTextColorPicker").onchange=e=>{
+ const l=get();if(!l||l.kind!=="text")return;
+ if(l.color!==e.target.value)mutate(x=>x.color=e.target.value);
+ closeQuickMenus();
+};
+
 $("shapePopover").onclick=e=>{const b=e.target.closest("button[data-shape]");if(b)setLayerShape(b.dataset.shape)};
 $("quickBacking").onclick=()=>mutate(l=>l.backing=!l.backing);
 $("quickDuplicate").onclick=()=>{closeQuickMenus();$("duplicate").click()};
