@@ -77,9 +77,10 @@ def verify_mobile(browser, url: str, width: int, height: int) -> None:
         "(el) => [el.naturalWidth, el.naturalHeight]"
     )
     assert size == [1000, 700], f"PNG preview lost original resolution: {size}"
-    assert page.locator("#saveShare").is_visible()
+    assert page.locator("#saveShare").count() == 0, "shared-to-WeChat/Photos button must be removed"
     assert page.locator("#saveDownload").is_visible()
-    assert page.locator("#saveHelp").inner_text().find("存储图像") >= 0
+    assert page.locator(".save-actions button").count() == 1, "mobile export must show only Download PNG"
+    assert page.locator("#saveHelp").inner_text().find("下载 PNG") >= 0
 
     with page.expect_download(timeout=12000) as dl:
         page.locator("#saveDownload").click()
