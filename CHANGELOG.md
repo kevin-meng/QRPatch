@@ -1,6 +1,18 @@
 # Changelog
 
-## [Unreleased] — Alpha candidate (2026-10-11)
+## [Unreleased] — Contextual toolbar iteration (2026-10-11)
+
+### Changed
+- Moved overlay crop shape selection from the inspector into the floating image toolbar.
+- Added More actions: white backing, duplicate, delete.
+- Added a floating background toolbar: replace poster, brightness, contrast, reset grading.
+- Same-size background replacement preserves overlays; mismatched sizes request confirmation.
+- Background filters affect only the poster, never overlaid QR/image pixels.
+- Expanded browser regression QA to 20 passing tests (1 native decoder test skipped).
+
+[Contextual toolbar UX specification](docs/UX_CONTEXT_TOOLBAR_20261011.md).
+
+## [v0.1.0-alpha.1] — Alpha candidate (2026-10-11)
 
 ### Added
 - Local-first AI-generated poster and QR replacement workspace, multi-layer editing and full-resolution PNG export.
