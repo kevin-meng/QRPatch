@@ -14,6 +14,12 @@
 .text-style-list button{min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left;padding:9px 10px;background:#fff;border:1px solid #dfe5f0;border-radius:10px;color:#253451;cursor:pointer}
 .text-style-list button.chosen{border-color:#4567e8;background:#eff3ff;box-shadow:0 0 0 1px #4567e8}
 .text-style-list button strong{font-size:12px}.text-style-list button small{font-size:10px;color:#8b97ab}
+.text-style-list button[data-text-style="bold"] strong{font-size:15px;font-weight:900;letter-spacing:-.3px}
+.text-style-list button[data-text-style="outline"] strong{font-size:15px;font-weight:900;color:#e5424b;text-shadow:1px 1px white,-1px -1px white,2px 2px #2440a7}
+.text-style-list button[data-text-style="white-card"] strong{background:#fff;border:1px solid #cbd5e8;border-radius:5px;padding:3px 7px}
+.text-style-list button[data-text-style="pill"] strong{background:#315ee6;color:#fff;padding:4px 9px;border-radius:20px}
+.text-style-list button[data-text-style="caption"] strong{font-size:11px;font-weight:550;color:#7a879e}
+
 .add-text-btn{width:100%;margin-top:13px;min-height:39px}
 .thumb.text-thumb{display:grid;place-items:center;font:bold 22px system-ui,sans-serif;color:#365be5;background:#edf2ff}
 .selection-tools.text-layer-selected #quickCrop,.selection-tools.text-layer-selected #quickShape,.selection-tools.text-layer-selected #quickZoomGroup,.selection-tools.text-layer-selected .tool-divider,.selection-tools.text-layer-selected #quickBacking{display:none!important}
@@ -260,6 +266,7 @@ function drawTextSelection(g,l){
 function addTextLayer(){
  if(!background){status("请先上传背景图，再添加文字");return}
  const content=$("textContent").value.trim();if(!content){$("textContent").focus();status("请先输入文字");return}
+ if(content.split("\\n").length>4){$("textContent").focus();status("文字最多支持 4 行，请精简后再添加");return}
  const geom=measureTextGeometry(content,chosenTextStyle);
  const factor=Math.min(1,background.width*.68/geom.baseW,background.height*.30/geom.baseH);
  const w=Math.max(10,geom.baseW*factor),h=Math.max(10,geom.baseH*factor);
@@ -291,6 +298,7 @@ $("textEditContent").onchange=e=>{
  const l=get();if(!l||l.kind!=="text")return;
  const value=e.target.value.trim();
  if(!value){e.target.value=l.text;status("文字不能留空");return}
+ if(value.split("\\n").length>4){e.target.value=l.text;status("文字最多支持 4 行，请精简后再更新");return}
  if(value===l.text)return;
  mutate(x=>{
   const oldBaseW=x.baseW,oldBaseH=x.baseH;
