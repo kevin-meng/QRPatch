@@ -11,9 +11,9 @@
 .text-swatch{width:25px;height:25px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8deea;background:var(--swatch);cursor:pointer}
 .text-swatch.chosen{box-shadow:0 0 0 2px #315be8}
 .text-style-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
-.text-style-list button{min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left;padding:9px 10px;background:#fff;border:1px solid #dfe5f0;border-radius:10px;color:#253451;cursor:pointer}
+.text-style-list button{min-width:0;min-height:48px;display:flex;align-items:center;justify-content:center;gap:3px;text-align:center;padding:9px 6px;background:#fff;border:1px solid #dfe5f0;border-radius:10px;color:#253451;cursor:pointer}
 .text-style-list button.chosen{border-color:#4567e8;background:#eff3ff;box-shadow:0 0 0 1px #4567e8}
-.text-style-list button strong{font-size:12px}.text-style-list button small{font-size:10px;color:#8b97ab}
+.text-style-list button strong{font-size:12px}
 .text-style-list button[data-text-style="bold"] strong{font-size:15px;font-weight:900;letter-spacing:-.3px}
 .text-style-list button[data-text-style="outline"] strong{font-size:15px;font-weight:900;color:#e5424b;text-shadow:1px 1px white,-1px -1px white,2px 2px #2440a7}
 .text-style-list button[data-text-style="white-card"] strong{background:#fff;border:1px solid #cbd5e8;border-radius:5px;padding:3px 7px}
@@ -22,7 +22,23 @@
 
 .add-text-btn{width:100%;margin-top:13px;min-height:39px}
 .thumb.text-thumb{display:grid;place-items:center;font:bold 22px system-ui,sans-serif;color:#365be5;background:#edf2ff}
-.selection-tools.text-layer-selected #quickCrop,.selection-tools.text-layer-selected #quickShape,.selection-tools.text-layer-selected #quickZoomGroup,.selection-tools.text-layer-selected .tool-divider,.selection-tools.text-layer-selected #quickBacking{display:none!important}
+.selection-tools:not(.text-layer-selected) .text-only-tool{display:none!important}
+.selection-tools.text-layer-selected #quickMove,.selection-tools.text-layer-selected #quickCrop,.selection-tools.text-layer-selected #quickShape,.selection-tools.text-layer-selected #quickZoomGroup,.selection-tools.text-layer-selected .tool-divider,.selection-tools.text-layer-selected #quickBacking{display:none!important}
+.selection-tools .tool-popover .text-style-list button{border:1px solid #dfe5f0;background:#fff;min-height:47px;padding:6px;color:#253451}
+.selection-tools .tool-popover .text-style-list button.chosen{background:#eff3ff;border-color:#4567e8}
+.selection-tools .tool-popover .text-style-list button[data-quick-text-style="outline"] strong{color:#e5424b;text-shadow:1px 1px white,-1px -1px white,2px 2px #2440a7}
+.selection-tools .tool-popover .text-style-list button[data-quick-text-style="pill"] strong{color:#fff;background:#315ee6;border-radius:20px;padding:4px 8px}
+.selection-tools .tool-popover .text-style-list button[data-quick-text-style="white-card"] strong{background:#fff;border:1px solid #cbd5e8;border-radius:5px;padding:3px 6px}
+.selection-tools .tool-popover .text-colors{justify-content:space-between}
+.selection-tools .tool-popover .text-entry{width:100%;font-weight:500;font-size:14px;white-space:pre-wrap;user-select:text;touch-action:auto}
+.selection-tools .tool-popover .field{text-align:left}
+.selection-tools .tool-popover .text-edit-buttons{display:flex;justify-content:flex-end;gap:7px;margin-top:10px}
+.selection-tools .tool-popover .text-edit-buttons button{border:1px solid #e3e7f0;background:#fff;padding:9px 13px}
+.selection-tools .tool-popover .text-edit-buttons button.active{background:#365be8;color:#fff;border-color:#365be8}
+.selection-tools #textEditPopover{width:min(320px,calc(100vw - 30px));min-width:250px}
+.selection-tools #textStylePopover{width:265px;min-width:220px}
+.selection-tools #textColorPopover{width:260px;min-width:210px}
+
 @media(max-width:650px){
 .sidebar.left #textComposer{min-width:225px;overflow-y:auto;overscroll-behavior:contain;padding-right:7px;scrollbar-width:thin}
 .app,.shell,.workspace,.canvas-area{max-width:100%;min-width:0;box-sizing:border-box}
@@ -34,8 +50,11 @@
 .canvas-area{width:100%;max-width:100%}
 .canvas-area>.selection-tools{box-sizing:border-box}
 
-.canvas-area>#quickTools.text-layer-selected{display:flex;justify-content:space-between;max-width:260px!important;left:auto!important;right:10px!important}
-.canvas-area>#quickTools.text-layer-selected #quickMove{flex:1}
+.canvas-area>#quickTools.text-layer-selected{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 44px;gap:3px;max-width:none!important;left:10px!important;right:10px!important}
+.canvas-area>#quickTools.text-layer-selected #quickTextEdit{grid-column:1;grid-row:1}
+.canvas-area>#quickTools.text-layer-selected #quickTextStyle{grid-column:2;grid-row:1}
+.canvas-area>#quickTools.text-layer-selected #quickTextColor{grid-column:3;grid-row:1}
+.canvas-area>#quickTools.text-layer-selected #quickMore{grid-column:4;grid-row:1}
 }
 .layer-eye{font-size:13px;color:#9da5b7;border:0;background:transparent;padding:5px}.hint{font-size:11px;color:#97a0af;line-height:1.7}.workspace{min-width:0;min-height:0;display:flex;flex-direction:column;background:#f6f7f9}.toolbar{height:61px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8ebf0;gap:12px}.toolbar .name{font-weight:730;font-size:13px}.toolbar .meta{font-size:11px;color:#a2a9b5;margin-top:3px}.toolgroup{display:flex;gap:6px}.iconbtn{min-width:34px;height:34px;border:1px solid #e6eaf0;border-radius:9px;background:#fff;color:#626e84;font-size:15px}.iconbtn:hover{border-color:#aebfff;color:#405de6}.canvas-area{flex:1;min-height:0;position:relative;display:grid;place-items:center;overflow:hidden;padding:35px}.canvas-area.dragover{background:#eaf0ff}.empty{max-width:395px;text-align:center}.empty-art{background:#fff;width:138px;height:138px;border:1px solid #eaedf4;border-radius:28px;display:grid;place-items:center;margin:0 auto 25px;box-shadow:0 18px 45px #25385a0c;font-size:55px}.empty h2{font-size:22px;letter-spacing:-.8px;margin:0 0 9px}.empty p{font-size:13px;color:#9ca5b4;line-height:1.9;margin:0 0 24px}.stage-wrap{position:relative;max-width:100%;max-height:100%;box-shadow:0 16px 65px #202b4930;background:#fff;touch-action:none;user-select:none}.stage-wrap canvas{display:block;width:100%;height:100%;touch-action:none}.selection-tools{max-width:calc(100vw - 40px);flex-wrap:wrap;justify-content:center;position:absolute;z-index:9;display:flex;align-items:center;gap:5px;padding:5px;background:#fffefa;border:1px solid #d9dfec;border-radius:13px;box-shadow:0 11px 28px #131e4052;white-space:nowrap;touch-action:manipulation;font-size:11px;user-select:none}
 .selection-tools[hidden]{display:none}
@@ -105,11 +124,11 @@
 </div>
 <label class="field" style="margin-top:12px" for="textStyle">文字样式</label>
 <div id="textStyles" class="text-style-list" role="radiogroup" aria-label="文字样式">
-<button type="button" data-text-style="bold" class="chosen" role="radio" aria-checked="true"><strong>标题</strong><small>醒目粗体</small></button>
-<button type="button" data-text-style="outline" role="radio" aria-checked="false"><strong>描边</strong><small>适合花背景</small></button>
-<button type="button" data-text-style="white-card" role="radio" aria-checked="false"><strong>白底卡片</strong><small>圆角留白</small></button>
-<button type="button" data-text-style="pill" role="radio" aria-checked="false"><strong>胶囊</strong><small>强调操作</small></button>
-<button type="button" data-text-style="caption" role="radio" aria-checked="false"><strong>说明</strong><small>轻量注释</small></button>
+<button type="button" data-text-style="bold" class="chosen" role="radio" aria-checked="true"><strong>标题</strong></button>
+<button type="button" data-text-style="outline" role="radio" aria-checked="false"><strong>描边</strong></button>
+<button type="button" data-text-style="white-card" role="radio" aria-checked="false"><strong>白底卡片</strong></button>
+<button type="button" data-text-style="pill" role="radio" aria-checked="false"><strong>胶囊</strong></button>
+<button type="button" data-text-style="caption" role="radio" aria-checked="false"><strong>说明</strong></button>
 </div>
 <button id="addText" type="button" class="btn primary add-text-btn">＋ 添加到画布</button>
 <p class="subnote">文字将成为独立图层。添加后拖动定位、拉动四角缩放，不与二维码绑定。</p>
@@ -117,18 +136,50 @@
 </aside>
 <main class="workspace">
 <div class="toolbar"><div><div class="name" id="docName">未命名画布</div><div class="meta" id="docMeta">从上传一张图片开始</div></div><div class="toolgroup"><button class="iconbtn" title="撤销 Ctrl/Cmd+Z" id="undo">↶</button><button class="iconbtn" title="重做 Ctrl/Cmd+Shift+Z" id="redo">↷</button><button class="iconbtn mobile-tabs" title="编辑属性" id="showSettings">☷</button></div></div>
-<div class="canvas-area" id="canvasArea"><div class="empty" id="empty"><div class="empty-art">▧</div><h2>让每个二维码，都准确无误。</h2><p>上传图片，拖拽放置真实二维码，随心调整位置和尺寸。简单几步，获得可扫描的精美作品。</p><button class="btn primary" id="start">上传一张图片 →</button><button class="btn" id="demo" style="margin-left:8px">体验示例画布</button></div><div class="stage-wrap" id="stage" tabindex="0" aria-label="可拖拽图层编辑画布" hidden><canvas id="canvas"></canvas><div class="selection-tools" id="quickTools" role="toolbar" aria-label="图片快捷编辑" hidden>
+<div class="canvas-area" id="canvasArea"><div class="empty" id="empty"><div class="empty-art">▧</div><h2>让每个二维码，都准确无误。</h2><p>上传图片，拖拽放置真实二维码，随心调整位置和尺寸。简单几步，获得可扫描的精美作品。</p><button class="btn primary" id="start">上传一张图片 →</button><button class="btn" id="demo" style="margin-left:8px">体验示例画布</button></div><div class="stage-wrap" id="stage" tabindex="0" aria-label="可拖拽图层编辑画布" hidden><canvas id="canvas"></canvas><div class="selection-tools" id="quickTools" role="toolbar" aria-label="图层快捷编辑" hidden>
 <button type="button" id="quickMove" class="active" title="整体移动和缩放">↗ 整体</button>
 <button type="button" id="quickCrop" title="单独调整图片与裁切蒙版">◩ 裁切</button>
 <div class="tool-divider"></div>
 <button type="button" id="quickShape" aria-haspopup="true" aria-expanded="false" title="选择裁切形状">□ 方形 <span aria-hidden="true">⌄</span></button>
 <div class="tool-divider"></div>
 <div id="quickZoomGroup" style="display:flex;align-items:center;gap:1px"><span class="mode-caption">图片</span><button type="button" id="quickZoomOut" aria-label="缩小框内图片">−</button><span class="zoom-readout" id="quickZoomLabel">100%</span><button type="button" id="quickZoomIn" aria-label="放大框内图片">＋</button></div>
-<div class="tool-divider"></div><button type="button" id="quickMore" aria-haspopup="true" aria-expanded="false" title="更多图层操作">⋯</button>
+<div class="tool-divider"></div>
+<button type="button" class="text-only-tool" id="quickTextEdit" aria-haspopup="true" aria-expanded="false">✎ 编辑文字</button>
+<button type="button" class="text-only-tool" id="quickTextStyle" aria-haspopup="true" aria-expanded="false">◈ 样式</button>
+<button type="button" class="text-only-tool" id="quickTextColor" aria-haspopup="true" aria-expanded="false">◉ 颜色</button>
+<button type="button" id="quickMore" aria-haspopup="true" aria-expanded="false" title="更多图层操作">⋯</button>
 <div class="tool-popover" id="shapePopover" hidden role="group" aria-label="裁切形状">
 <button type="button" class="menu-option" data-shape="square">□ 方形</button>
 <button type="button" class="menu-option" data-shape="rounded">▢ 圆角</button>
 <button type="button" class="menu-option" data-shape="circle">◯ 圆形</button>
+</div>
+<div class="tool-popover" id="textEditPopover" hidden role="group" aria-label="编辑文字内容">
+<label class="field" for="quickTextValue">修改文字</label>
+<textarea class="text-entry" id="quickTextValue" maxlength="80" rows="3" placeholder="输入文字，最多四行"></textarea>
+<div class="text-edit-buttons">
+<button type="button" id="quickTextCancel">取消</button>
+<button type="button" class="active" id="quickTextApply">应用修改</button>
+</div>
+</div>
+<div class="tool-popover" id="textStylePopover" hidden role="group" aria-label="更改文字样式">
+<div class="text-style-list" id="quickTextStyles" role="radiogroup" aria-label="切换文字样式">
+<button type="button" data-quick-text-style="bold" role="radio" aria-checked="false"><strong>标题</strong></button>
+<button type="button" data-quick-text-style="outline" role="radio" aria-checked="false"><strong>描边</strong></button>
+<button type="button" data-quick-text-style="white-card" role="radio" aria-checked="false"><strong>白底卡片</strong></button>
+<button type="button" data-quick-text-style="pill" role="radio" aria-checked="false"><strong>胶囊</strong></button>
+<button type="button" data-quick-text-style="caption" role="radio" aria-checked="false"><strong>说明</strong></button>
+</div>
+</div>
+<div class="tool-popover" id="textColorPopover" hidden role="group" aria-label="更改文字颜色">
+<label class="field" for="quickTextColorPicker">文字颜色</label>
+<div class="text-colors">
+<input id="quickTextColorPicker" aria-label="自定义图层文字颜色" type="color" value="#182c5c">
+<button type="button" class="text-swatch" data-quick-color="#182c5c" aria-label="深蓝色" style="--swatch:#182c5c"></button>
+<button type="button" class="text-swatch" data-quick-color="#ffffff" aria-label="白色" style="--swatch:#ffffff"></button>
+<button type="button" class="text-swatch" data-quick-color="#ec3341" aria-label="红色" style="--swatch:#ec3341"></button>
+<button type="button" class="text-swatch" data-quick-color="#1964ee" aria-label="蓝色" style="--swatch:#1964ee"></button>
+<button type="button" class="text-swatch" data-quick-color="#182026" aria-label="黑色" style="--swatch:#182026"></button>
+</div>
 </div>
 <div class="tool-popover" id="morePopover" hidden role="group" aria-label="更多图层操作">
 <button type="button" class="menu-option" id="quickBacking">▣ 白色衬底 <span id="quickBackingCheck">✓</span></button>
