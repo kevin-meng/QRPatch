@@ -32,6 +32,20 @@ Click an empty portion of the poster to select the background. Its own floating 
 
 [Contextual toolbar design](docs/UX_CONTEXT_TOOLBAR_20261011.md).
 
+## Mobile editing and saving to Photos
+
+On phones (tested at **390 px** and **320 px** widths), the contextual image/background toolbar docks **inside the canvas editing area**, rather than following a tiny scaled QR selection off-screen. It provides larger touch targets, an above-the-bar shape/action menu and space for resizing directly on the poster.
+
+**Export on mobile:** `导出 PNG` first opens a preview of the original-resolution PNG. Choose:
+
+- **分享 / 存到相册** — on browsers supporting Web Share with PNG files, opens the native share sheet. On iPhone, choose **存储图像** (Save Image) to save to Photos.
+- **长按预览图片** — use the browser's Save Image action if it supports long-press saving (useful in some in-app browsers).
+- **下载 PNG** — downloads a file; on iOS it may go to the Files/Downloads folder rather than directly to Photos.
+
+Mobile browsers cannot universally save straight into the Photos app without asking you to use the system share/save UI. The app never claims that a successful download means the picture is already in Photos.
+
+Run `python scripts/mobile-qa.py` after installing Playwright/Chromium to exercise mobile menus, image preview, and a real downloadable PNG at both screen widths.
+
 ## Two clear editing modes
 
 1. **整体 (Whole layer):** Drag to move the layer. Drag a corner to resize the mask **and** its image together, preserving the chosen crop.
@@ -78,6 +92,10 @@ See [release QA and remaining verification](docs/RELEASE_QA_20261011.md). Manual
 [Open the browser preview](https://qrpatch-studio.onrender.com)
 
 ![QRPatch Studio — real editor screenshot](docs/assets/editor-preview.png)
+
+**Mobile editor preview (390 px):**
+
+<img src="docs/assets/editor-mobile-preview.png" alt="QRPatch mobile editor with bottom contextual toolbar" width="340">
 
 Screenshot generated from the actual QRPatch editor, with its demo canvas active. The demo's QR-like illustration is not scannable.
 
