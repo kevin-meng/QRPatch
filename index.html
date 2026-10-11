@@ -18,7 +18,7 @@
 .thumb.text-thumb{display:grid;place-items:center;font:bold 22px system-ui,sans-serif;color:#365be5;background:#edf2ff}
 .selection-tools.text-layer-selected #quickCrop,.selection-tools.text-layer-selected #quickShape,.selection-tools.text-layer-selected #quickZoomGroup,.selection-tools.text-layer-selected .tool-divider,.selection-tools.text-layer-selected #quickBacking{display:none!important}
 @media(max-width:650px){
-.sidebar.left #textComposer{min-width:205px;overflow:auto}
+.sidebar.left #textComposer{min-width:225px;overflow-y:auto;overscroll-behavior:contain;padding-right:7px;scrollbar-width:thin}
 .canvas-area>#quickTools.text-layer-selected{display:flex;justify-content:space-between;max-width:260px!important;left:auto!important;right:10px!important}
 .canvas-area>#quickTools.text-layer-selected #quickMove{flex:1}
 }
@@ -49,7 +49,7 @@
 .export-panel .save-actions button{flex:1;min-height:46px}
 .export-panel .save-help{font-size:12px;color:#56657e;line-height:1.6;margin:12px 0 0;background:#f1f4fa;padding:10px 12px;border-radius:10px}
 .export-panel .save-close{position:absolute;right:13px;top:12px;border:0;background:#f0f2f7;color:#657089;border-radius:50%;width:36px;height:36px;font-size:20px}
-@media(max-width:650px){.app{height:100dvh;min-height:0;grid-template-rows:62px minmax(0,1fr)}header{padding:0 13px}.brand{font-size:17px}.brand small{display:none}.top-actions .desktop{display:none}#export{min-height:43px;padding:9px 13px}.shell{display:flex;flex-direction:column;min-height:0}.sidebar.left{order:2;border-right:0;border-top:1px solid #e9ecf2;padding:9px 12px;height:140px;flex:none;display:flex;gap:12px}.sidebar.left .section{flex:1;min-width:0;margin:0}.sidebar.left .section-title{font-size:12px;margin:0 0 6px}.sidebar.left .drop{padding:9px 5px}.sidebar.left .drop .big{display:none}.sidebar.left .drop span{display:none}.sidebar.left .eyebrow,.sidebar.left .hint{display:none}.sidebar.left .layers{overflow:auto;max-height:120px}.workspace{order:1;flex:1;min-height:0}.toolbar{height:43px;padding:0 13px}.canvas-area{padding:10px 10px 98px;min-height:0;overflow:hidden}.sidebar.right{top:62px}.bottom{height:32px;padding:0 12px}.bottom .shortcut{display:none}.bottom span:last-child{display:none}
+@media(max-width:650px){.app{height:100dvh;min-height:0;grid-template-rows:62px minmax(0,1fr)}header{padding:0 13px}.brand{font-size:17px}.brand small{display:none}.top-actions .desktop{display:none}#export{min-height:43px;padding:9px 13px}.shell{display:flex;flex-direction:column;min-height:0}.sidebar.left{order:2;border-right:0;border-top:1px solid #e9ecf2;padding:9px 12px;height:192px;flex:none;display:flex;gap:12px;overflow-x:auto;scrollbar-width:thin}.sidebar.left .section{flex:1;min-width:0;margin:0}.sidebar.left .section-title{font-size:12px;margin:0 0 6px}.sidebar.left .drop{padding:9px 5px}.sidebar.left .drop .big{display:none}.sidebar.left .drop span{display:none}.sidebar.left .eyebrow,.sidebar.left .hint{display:none}.sidebar.left .layers{overflow:auto;max-height:120px}.workspace{order:1;flex:1;min-height:0}.toolbar{height:43px;padding:0 13px}.canvas-area{padding:10px 10px 98px;min-height:0;overflow:hidden}.sidebar.right{top:62px}.bottom{height:32px;padding:0 12px}.bottom .shortcut{display:none}.bottom span:last-child{display:none}
 .canvas-area>.selection-tools{position:absolute!important;left:10px!important;right:10px!important;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;width:auto!important;max-width:none!important;transform:none!important;margin:0;box-shadow:0 8px 22px #17234338;border-radius:14px;z-index:20}
 .canvas-area>#quickTools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.35fr) 44px;gap:4px;padding:6px}
 .canvas-area>.selection-tools[hidden]{display:none!important}
@@ -379,8 +379,51 @@ function moveDrag(e){
 
 function endDrag(){drag=null;renderLayers()}
 function sync(){renderLayers();properties();draw();updateHistory()}
-function renderLayers(){$("layerCount").textContent=layers.length;const holder=$("layers");holder.replaceChildren();for(const l of [...layers].reverse()){const b=document.createElement("div");b.className="layer"+(selected===l.id?" active":"");b.setAttribute("role","button");b.tabIndex=0;const img=document.createElement("img");img.className="thumb";img.src=l.url;img.alt="";const copy=document.createElement("div");copy.className="layer-copy";const nm=document.createElement("div");nm.className="layer-name";nm.textContent=l.name;const typ=document.createElement("div");typ.className="layer-type";typ.textContent=l.kind==="qr"?"二维码素材":"图片素材";copy.append(nm,typ);const eye=document.createElement("button");eye.className="layer-eye";eye.title=l.visible?"隐藏图层":"显示图层";eye.textContent=l.visible?"◉":"◌";eye.onclick=e=>{e.stopPropagation();commit();l.visible=!l.visible;sync()};b.append(img,copy,eye);b.onclick=()=>{if(selected!==l.id)cropMode=false;selected=l.id;backgroundSelected=false;closeQuickMenus();sync()};b.onkeydown=e=>{if(e.key==="Enter"){if(selected!==l.id)cropMode=false;selected=l.id;backgroundSelected=false;closeQuickMenus();sync()}};holder.append(b)}}
-function properties(){const l=get();$("properties").hidden=!l;$("noSelection").hidden=!!l;if(!l){$("noSelection").textContent=backgroundSelected?"背景已选中：通过画布上方的悬浮工具条更换图片或调整亮度、对比度。":"选中图片即可编辑；点击画布空白背景可显示背景快捷工具条。";return}for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]])$(id).value=Math.round(l[k]);$("lock").checked=l.lock;$("backing").checked=l.backing;$("fit").value=l.fit||"contain";$("fit").closest(".control").hidden=!!l.imageRect;$("offsetX").closest(".controls").hidden=!!l.imageRect;$("padding").value=l.padding??8;$("offsetX").value=l.offsetX??0;$("offsetY").value=l.offsetY??0;$("imageZoom").value=Math.round((l.imageZoom||1)*100);$("zoomValue").textContent=Math.round((l.imageZoom||1)*100)+"%";$("cropWarning").textContent=l.shape==="circle"?"注意：圆形裁切可能破坏二维码，请仅用于头像、Logo 或装饰图片。":"二维码建议保持完整方形，避免裁掉定位点导致无法扫描。"}
+function renderLayers(){
+ $("layerCount").textContent=layers.length;
+ const holder=$("layers");holder.replaceChildren();
+ for(const l of [...layers].reverse()){
+  const b=document.createElement("div");
+  b.className="layer"+(selected===l.id?" active":"");
+  b.setAttribute("role","button");b.tabIndex=0;
+  let thumb;
+  if(l.kind==="text"){thumb=document.createElement("span");thumb.className="thumb text-thumb";thumb.textContent="T";}
+  else{thumb=document.createElement("img");thumb.className="thumb";thumb.src=l.url;thumb.alt="";}
+  const copy=document.createElement("div");copy.className="layer-copy";
+  const nm=document.createElement("div");nm.className="layer-name";nm.textContent=l.name;
+  const typ=document.createElement("div");typ.className="layer-type";
+  typ.textContent=l.kind==="text"?"文字图层 · "+(TEXT_STYLES[l.textStyle]?.label||"文字"):l.kind==="qr"?"二维码素材":"图片素材";
+  copy.append(nm,typ);
+  const eye=document.createElement("button");eye.className="layer-eye";
+  eye.title=l.visible?"隐藏图层":"显示图层";eye.textContent=l.visible?"◉":"◌";
+  eye.onclick=e=>{e.stopPropagation();commit();l.visible=!l.visible;sync()};
+  b.append(thumb,copy,eye);
+  const select=()=>{if(selected!==l.id)cropMode=false;selected=l.id;backgroundSelected=false;closeQuickMenus();sync()};
+  b.onclick=select;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select()}};
+  holder.append(b);
+ }
+}
+function properties(){
+ const l=get();
+ $("properties").hidden=!l;$("noSelection").hidden=!!l;
+ if(!l){$("noSelection").textContent=backgroundSelected?"背景已选中：通过画布悬浮工具条更换图片或调整亮度、对比度。":"从左侧添加图片或文字；点击画布上的图层进行定位。";return}
+ for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]])$(id).value=Math.round(l[k]);
+ $("lock").checked=!!l.lock;
+ const isText=l.kind==="text";
+ $("imageInspector").hidden=isText;
+ $("textInspector").hidden=!isText;
+ if(isText){
+  if(document.activeElement!==$("textEditContent"))$("textEditContent").value=l.text;
+  return;
+ }
+ $("backing").checked=l.backing;$("fit").value=l.fit||"contain";
+ $("fit").closest(".control").hidden=!!l.imageRect;
+ $("offsetX").closest(".controls").hidden=!!l.imageRect;
+ $("padding").value=l.padding??8;$("offsetX").value=l.offsetX??0;$("offsetY").value=l.offsetY??0;
+ $("imageZoom").value=Math.round((l.imageZoom||1)*100);
+ $("zoomValue").textContent=Math.round((l.imageZoom||1)*100)+"%";
+ $("cropWarning").textContent=l.shape==="circle"?"注意：圆形裁切可能破坏二维码，请仅用于头像、Logo 或装饰图片。":"二维码建议保持完整方形，避免裁掉定位点导致无法扫描。";
+}
 function mutate(fn){const l=get();if(!l)return;commit();fn(l);sync()}
 for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]]){
   $(id).addEventListener("change",e=>mutate(l=>{
