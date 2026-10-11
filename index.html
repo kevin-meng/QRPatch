@@ -19,6 +19,15 @@
 .selection-tools.text-layer-selected #quickCrop,.selection-tools.text-layer-selected #quickShape,.selection-tools.text-layer-selected #quickZoomGroup,.selection-tools.text-layer-selected .tool-divider,.selection-tools.text-layer-selected #quickBacking{display:none!important}
 @media(max-width:650px){
 .sidebar.left #textComposer{min-width:225px;overflow-y:auto;overscroll-behavior:contain;padding-right:7px;scrollbar-width:thin}
+.app,.shell,.workspace,.canvas-area{max-width:100%;min-width:0;box-sizing:border-box}
+.shell{width:100%;overflow:hidden}
+.workspace{width:100%;overflow:hidden}
+.sidebar.left{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-x:auto}
+.sidebar.left .section{flex:0 0 185px}
+.sidebar.left #textComposer{flex:0 0 225px}
+.canvas-area{width:100%;max-width:100%}
+.canvas-area>.selection-tools{box-sizing:border-box}
+
 .canvas-area>#quickTools.text-layer-selected{display:flex;justify-content:space-between;max-width:260px!important;left:auto!important;right:10px!important}
 .canvas-area>#quickTools.text-layer-selected #quickMove{flex:1}
 }
