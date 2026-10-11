@@ -105,12 +105,11 @@
 <button type="button" id="saveClose" class="save-close" aria-label="关闭图片预览">×</button>
 <h2 class="save-heading" id="saveTitle">图片已生成</h2>
 <div class="save-subtitle" id="saveDimensions">PNG · 保持原始分辨率</div>
-<div class="save-image"><img id="savePreview" alt="导出的图片，长按可保存到手机相册"></div>
+<div class="save-image"><img id="savePreview" alt="导出的 PNG 图片预览"></div>
 <div class="save-actions">
-<button type="button" id="saveShare" class="btn primary">分享 / 存到相册</button>
-<button type="button" id="saveDownload" class="btn">下载 PNG</button>
+<button type="button" id="saveDownload" class="btn primary">下载 PNG</button>
 </div>
-<p class="save-help" id="saveHelp">iPhone：点「分享 / 存到相册」，在系统菜单中选择「存储图像」；也可以长按上方图片保存。Android：选择分享给相册应用，或点击下载 PNG。</p>
+<p class="save-help" id="saveHelp">点击「下载 PNG」保存原始图片文件。下载位置由浏览器决定；微信内置浏览器可能限制下载，可改用系统浏览器打开。</p>
 </div></div>
 <input type="file" id="bgInput" accept="image/png,image/jpeg,image/webp" hidden><input type="file" id="assetInput" accept="image/png,image/jpeg,image/webp" multiple hidden>
 <script>
@@ -301,11 +300,11 @@ $("duplicate").onclick=()=>mutate(l=>{const copy={...l,id:"layer-"+(++seq),name:
 $("stage").addEventListener("pointerdown",startDrag);$("stage").addEventListener("pointermove",moveDrag);$("stage").addEventListener("pointerup",endDrag);$("stage").addEventListener("pointercancel",endDrag);
 window.addEventListener("keydown",e=>{if(!$("saveSheet").hidden)return;const t=e.target;if(t.matches("input,textarea,select"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo();return}const l=get();if(!l)return;if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();$("delete").click()}if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();mutate(x=>{const d=e.shiftKey?10:1,dx=e.key==="ArrowLeft"?-d:e.key==="ArrowRight"?d:0,dy=e.key==="ArrowUp"?-d:e.key==="ArrowDown"?d:0;if(cropMode){ensureImageRect(x);x.imageRect.x+=dx;x.imageRect.y+=dy}else{x.x+=dx;x.y+=dy;if(x.imageRect){x.imageRect.x+=dx;x.imageRect.y+=dy}}})}});
 $("undo").onclick=undo;$("redo").onclick=redo;
-let saveObjectUrl=null,saveBlob=null,saveName="";
+let saveObjectUrl=null,saveName="";
 function closeSaveSheet(){
  $("saveSheet").hidden=true;$("savePreview").removeAttribute("src");
  if(saveObjectUrl){URL.revokeObjectURL(saveObjectUrl);saveObjectUrl=null}
- saveBlob=null;document.body.style.overflow="";
+ document.body.style.overflow="";
 }
 function downloadGeneratedPng(url,name){
  const a=document.createElement("a");a.href=url;a.download=name;a.rel="noopener";
@@ -313,24 +312,16 @@ function downloadGeneratedPng(url,name){
 }
 function showSaveSheet(blob,url,name){
  if(saveObjectUrl)URL.revokeObjectURL(saveObjectUrl);
- saveBlob=blob;saveObjectUrl=url;saveName=name;
+ saveObjectUrl=url;saveName=name;
  $("savePreview").src=url;
  $("saveDimensions").textContent="PNG · "+background.width+" × "+background.height+" · "+Math.max(1,Math.round(blob.size/1024))+" KB";
- $("saveHelp").textContent="iPhone：点「分享 / 存到相册」后选择「存储图像」，或长按图片选择保存。Android：可分享给相册应用，也可下载 PNG（通常保存在下载目录）。";
+ $("saveHelp").textContent="点击「下载 PNG」保存图片文件。微信内置浏览器可能限制下载；如无反应，请使用 Safari、Chrome 等系统浏览器打开页面。";
  $("saveSheet").hidden=false;document.body.style.overflow="hidden";
  $("saveClose").focus();
 }
 $("saveClose").onclick=closeSaveSheet;
 $("saveSheet").addEventListener("pointerdown",e=>{if(e.target===$("saveSheet"))closeSaveSheet()});
-$("saveDownload").onclick=()=>{if(!saveObjectUrl)return;downloadGeneratedPng(saveObjectUrl,saveName);$("saveHelp").textContent="已请求浏览器下载。部分 iPhone 浏览器会将文件保存到「文件」的下载目录；如需保存到照片，请使用系统分享菜单中的「存储图像」，或长按图片。";status("已请求下载 PNG")};
-$("saveShare").onclick=async()=>{
- if(!saveBlob)return;
- const file=new File([saveBlob],saveName,{type:"image/png"});
- const compatible=typeof navigator.share==="function"&&typeof navigator.canShare==="function"&&navigator.canShare({files:[file]});
- if(!compatible){$("saveHelp").textContent="当前浏览器无法直接分享 PNG 文件。请长按上方图片选择「保存图片」，或点击「下载 PNG」后从文件管理器保存到相册。";return}
- try{await navigator.share({files:[file],title:"QRPatch 图片"});status("已打开系统分享界面；可选择存储图像或相册应用。")}
- catch(e){if(e.name!=="AbortError")$("saveHelp").textContent="系统分享未完成。请长按预览图片保存，或使用「下载 PNG」。"}
-};
+$("saveDownload").onclick=()=>{if(!saveObjectUrl)return;downloadGeneratedPng(saveObjectUrl,saveName);$("saveHelp").textContent="已请求下载 PNG。请查看浏览器下载列表或文件管理器；若微信内置浏览器无响应，请在系统浏览器中打开后重试。";status("已请求下载 PNG")};
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&!$("saveSheet").hidden){e.preventDefault();closeSaveSheet()}});
 $("export").onclick=()=>{
  if(!background){alert("请先上传背景图片");return}
@@ -339,7 +330,7 @@ $("export").onclick=()=>{
  try{paint(g,false);out.toBlob(blob=>{
    if(!blob){status("导出失败：图片可能超出浏览器内存限制");return}
    const url=URL.createObjectURL(blob),name="qrpatch-"+Date.now()+".png";
-   if(window.matchMedia("(max-width:650px)").matches||/iP(hone|ad|od)/.test(navigator.userAgent)){showSaveSheet(blob,url,name);status("PNG 已生成，请选择分享、保存图片或下载。")}
+   if(window.matchMedia("(max-width:650px)").matches||/iP(hone|ad|od)/.test(navigator.userAgent)){showSaveSheet(blob,url,name);status("PNG 已生成，请点击下载 PNG。")}
    else{downloadGeneratedPng(url,name);setTimeout(()=>URL.revokeObjectURL(url),12000);status("已导出原始分辨率 PNG")}
  },"image/png")}catch(e){status("导出失败："+e.message)}
 };
