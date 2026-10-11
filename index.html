@@ -59,7 +59,7 @@
 <label class="range-group"><span class="range-head"><span>亮度</span><output id="bgBrightnessLabel">100%</output></span><input type="range" id="bgBrightness" min="40" max="160" step="1" value="100"></label>
 <label class="range-group"><span class="range-head"><span>对比度</span><output id="bgContrastLabel">100%</output></span><input type="range" id="bgContrast" min="40" max="160" step="1" value="100"></label>
 <p class="subnote">仅调整背景，不改变二维码及其他图层。导出 PNG 时生效。</p>
-</div></div></div></div></div>
+</div></div></div></div>
 <div class="bottom"><span id="zoomInfo">准备就绪</span><span class="shortcut">拖拽移动 · 拖动四角缩放 · 方向键微调 · Delete 删除</span><span>100% Private · Local only</span></div>
 </main>
 <aside class="sidebar right" id="settings"><div class="eyebrow">INSPECTOR · 编辑属性</div><h3 class="section-title">图层属性 <button class="btn quiet mobile-tabs" id="closeSettings">✕</button></h3><div id="noSelection" class="notice">选中画布中的图片或左侧图层，即可编辑位置、大小和裁切样式。</div><div id="properties" hidden>
@@ -87,7 +87,17 @@ function status(s){$("status").textContent=s}
 function loadImage(file){return new Promise((resolve,reject)=>{if(!["image/png","image/jpeg","image/webp"].includes(file.type))return reject(Error("仅支持 PNG、JPG 和 WebP 图片"));const url=URL.createObjectURL(file),img=new Image();img.onload=()=>{if(!img.naturalWidth||!img.naturalHeight){URL.revokeObjectURL(url);reject(Error("图片尺寸无效"));return}resolve({image:img,url})};img.onerror=()=>{URL.revokeObjectURL(url);reject(Error("图片无法读取"))};img.src=url})}
 function get(){return layers.find(l=>l.id===selected)}
 function initialSize(img){const max=Math.min(background.width,background.height)*.40;const w=Math.min(img.naturalWidth,max),h=w*img.naturalHeight/img.naturalWidth;return {w,h}}
-async function setBackground(file){if(!file)return;try{const a=await loadImage(file);if(background)URL.revokeObjectURL(background.url);releaseAssets();background={...a,width:a.image.naturalWidth,height:a.image.naturalHeight,name:file.name};layers=[];selected=null;backgroundSelected=true;bgEdits={brightness:100,contrast:100};history=[];future=[];$("empty").hidden=true;$("stage").hidden=false;$("bgInfo").textContent=file.name+" · "+background.width+" × "+background.height;$("docName").textContent=file.name;$("docMeta").textContent="原图 "+background.width+" × "+background.height;$("bgInput").value="";status("");layout();sync()}catch(e){status(e.message);alert(e.message)}}
+async function setBackground(file){if(!file)return;try{const a=await loadImage(file);
+const canKeep=background&&background.width===a.image.naturalWidth&&background.height===a.image.naturalHeight;
+if(background&&layers.length&&!canKeep&&!confirm("新背景尺寸不同。继续更换会清空当前图层，是否继续？")){URL.revokeObjectURL(a.url);$("bgInput").value="";return}
+if(background)URL.revokeObjectURL(background.url);
+if(!canKeep){releaseAssets();layers=[];history=[];future=[]}
+background={...a,width:a.image.naturalWidth,height:a.image.naturalHeight,name:file.name};
+selected=null;backgroundSelected=true;cropMode=false;bgEdits={brightness:100,contrast:100};
+closeQuickMenus();$("empty").hidden=true;$("stage").hidden=false;
+$("bgInfo").textContent=file.name+" · "+background.width+" × "+background.height;
+$("docName").textContent=file.name;$("docMeta").textContent="原图 "+background.width+" × "+background.height;
+$("bgInput").value="";status(canKeep&&layers.length?"背景已更换，原有图层和位置保持不变。":"");layout();sync()}catch(e){status(e.message);alert(e.message)}}
 async function addFiles(list){if(!background){alert("请先上传背景图片");return}for(const file of list){try{const a=await loadImage(file);const id="asset-"+(++seq),asset={...a,id,name:file.name};files.push(asset);const size=initialSize(a.image);const side=Math.round(Math.min(background.width,background.height)*.38);size.w=side;size.h=side;commit();const layer={id:"layer-"+(++seq),assetId:id,name:file.name,image:a.image,url:a.url,x:(background.width-size.w)/2+layers.length*12,y:(background.height-size.h)/2+layers.length*12,w:size.w,h:size.h,shape:"square",crop:null,imageZoom:1,fit:"contain",offsetX:0,offsetY:0,padding:8,backing:true,lock:true,visible:true,kind:/qr|二维码|code/i.test(file.name)?"qr":"image"};layers.push(layer);selected=layer.id;backgroundSelected=false}catch(e){status(e.message)}}$("assetInput").value="";sync()}
 function layout(){if(!background)return;const area=$("canvasArea"),pad=window.innerWidth<650?30:70;scale=Math.min((area.clientWidth-pad)/background.width,(area.clientHeight-pad)/background.height,1);if(!Number.isFinite(scale)||scale<=0)scale=.1;const w=Math.max(1,Math.round(background.width*scale)),h=Math.max(1,Math.round(background.height*scale));$("stage").style.width=w+"px";$("stage").style.height=h+"px";const c=$("canvas");c.width=w*devicePixelRatio;c.height=h*devicePixelRatio;$("zoomInfo").textContent="画布缩放 "+Math.round(scale*100)+"%";draw()}
 function shapePath(g,l){g.beginPath();if(l.shape==="circle"){g.ellipse(l.x+l.w/2,l.y+l.h/2,l.w/2,l.h/2,0,0,Math.PI*2)}else if(l.shape==="rounded"){const r=Math.min(l.w,l.h)*.12;g.roundRect(l.x,l.y,l.w,l.h,r)}else g.rect(l.x,l.y,l.w,l.h)}
