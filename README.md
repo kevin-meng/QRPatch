@@ -32,19 +32,13 @@ Click an empty portion of the poster to select the background. Its own floating 
 
 [Contextual toolbar design](docs/UX_CONTEXT_TOOLBAR_20261011.md).
 
-## Mobile editing and saving to Photos
+## Mobile editing and PNG download
 
-On phones (tested at **390 px** and **320 px** widths), the contextual image/background toolbar docks **inside the canvas editing area**, rather than following a tiny scaled QR selection off-screen. It provides larger touch targets, an above-the-bar shape/action menu and space for resizing directly on the poster.
+On phones, the contextual toolbar is docked inside the canvas editing area to keep buttons accessible on small screens.
 
-**Export on mobile:** `导出 PNG` first opens a preview of the original-resolution PNG. Choose:
+Tapping **导出 PNG** on mobile opens a preview at the original resolution. The export sheet contains **only one action: 下载 PNG**. No share-to-WeChat or share-to-Photos action is offered. The PNG file goes to the browser's downloads or file manager according to the device; some WeChat in-app browsers may block direct downloads, in which case opening the page in Safari/Chrome or another system browser is recommended.
 
-- **分享 / 存到相册** — on browsers supporting Web Share with PNG files, opens the native share sheet. On iPhone, choose **存储图像** (Save Image) to save to Photos.
-- **长按预览图片** — use the browser's Save Image action if it supports long-press saving (useful in some in-app browsers).
-- **下载 PNG** — downloads a file; on iOS it may go to the Files/Downloads folder rather than directly to Photos.
-
-Mobile browsers cannot universally save straight into the Photos app without asking you to use the system share/save UI. The app never claims that a successful download means the picture is already in Photos.
-
-Run `python scripts/mobile-qa.py` after installing Playwright/Chromium to exercise mobile menus, image preview, and a real downloadable PNG at both screen widths.
+Run `python scripts/mobile-qa.py` after installing Playwright/Chromium. Tests assert the share button is absent and that **下载 PNG** produces a real PNG download at 390px and 320px viewport widths.
 
 ## Two clear editing modes
 
