@@ -32,6 +32,14 @@ Click an empty portion of the poster to select the background. Its own floating 
 
 [Contextual toolbar design](docs/UX_CONTEXT_TOOLBAR_20261011.md).
 
+## Text annotations (文字标注)
+
+Create an independent text layer from the left sidebar: type a short caption, choose a color and one of five visually labeled presets (**标题 / 描边 / 白底卡片 / 胶囊 / 说明**). Presets are preview-only; no redundant helper captions are shown.
+
+**After adding a text layer, select it on the canvas** to reveal the text-specific contextual toolbar: **编辑文字 / 样式 / 颜色 / ⋯**. Unlike image layers, text layers do not show crop or image zoom controls. Use **编辑文字** to change wording (up to four lines) without moving its center, **样式** to change its preset while preserving the previous scale and center, and **颜色** to pick a swatch or custom color. **⋯** retains duplicate/delete. Canvas drag/resize and the right inspector's precise X/Y/W/H remain available.
+
+All text remains a redrawable Canvas text layer rather than a pre-flattened bitmap; exported PNG uses the original poster resolution.
+
 ## Mobile editing and PNG download
 
 On phones, the contextual toolbar is docked inside the canvas editing area to keep buttons accessible on small screens.

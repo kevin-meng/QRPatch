@@ -67,6 +67,12 @@ def verify_desktop(browser, url):
     assert not p.locator("#quickCrop").is_visible()
     assert not p.locator("#quickShape").is_visible()
     assert p.locator(".text-thumb").count()==1
+    assert p.locator("#textStyles small").count()==0, "Text presets should have no helper captions"
+    assert p.locator("#quickTextEdit").is_visible()
+    assert p.locator("#quickTextStyle").is_visible()
+    assert p.locator("#quickTextColor").is_visible()
+    assert p.locator("#quickMore").is_visible()
+    assert not p.locator("#quickMove").is_visible()
     # Precise geometry, aspect lock and undo/redo on a text object.
     width=item["w"]
     p.locator("#propW").fill(str(round(width*1.3)))
@@ -82,6 +88,48 @@ def verify_desktop(browser, url):
     p.locator("#textEditContent").fill("立即扫码报名")
     p.locator("#textEditContent").press("Tab")
     assert selected_text(p)["text"]=="立即扫码报名"
+    assert selected_text(p)["color"]=="#ec3341"
+    # Contextual editor: invalid text does not silently truncate or mutate the layer.
+    original = selected_text(p)
+    p.locator("#quickTextEdit").click()
+    assert p.locator("#textEditPopover").is_visible()
+    assert p.locator("#quickTextValue").input_value()=="立即扫码报名"
+    p.locator("#quickTextValue").fill(chr(10).join(["一","二","三","四","五"]))
+    p.locator("#quickTextApply").click()
+    assert p.locator("#textEditPopover").is_visible(), "Validation failure must keep editor open"
+    assert "最多支持 4 行" in p.locator("#textEditFeedback").inner_text()
+    assert selected_text(p)["text"] == original["text"]
+    p.locator("#quickTextValue").fill("扫码立即加入")
+    p.locator("#quickTextApply").click()
+    changed=selected_text(p)
+    assert changed["text"]=="扫码立即加入"
+    assert p.locator("#textEditPopover").is_hidden()
+    assert abs((changed["x"]+changed["w"]/2)-(original["x"]+original["w"]/2))<1.5
+    assert abs((changed["y"]+changed["h"]/2)-(original["y"]+original["h"]/2))<1.5
+    # Style changes must preserve user positioning, not put text back in canvas center.
+    original=selected_text(p)
+    p.locator("#quickTextStyle").click()
+    assert p.locator("#textStylePopover").is_visible()
+    p.locator('#quickTextStyles [data-quick-text-style="pill"]').click()
+    changed=selected_text(p)
+    assert changed["textStyle"]=="pill"
+    assert abs((changed["x"]+changed["w"]/2)-(original["x"]+original["w"]/2))<1.5
+    assert abs((changed["y"]+changed["h"]/2)-(original["y"]+original["h"]/2))<1.5
+    assert p.locator("#textStylePopover").is_hidden()
+    p.locator("#quickTextStyle").click()
+    p.locator('#quickTextStyles [data-quick-text-style="white-card"]').click()
+    assert selected_text(p)["textStyle"]=="white-card"
+    p.locator("#quickTextColor").click()
+    assert p.locator("#textColorPopover").is_visible()
+    p.locator('#textColorPopover [data-quick-color="#1964ee"]').click()
+    assert selected_text(p)["color"]=="#1964ee"
+    assert p.locator("#textColorPopover").is_hidden()
+    p.locator("#undo").click()
+    assert selected_text(p)["color"]=="#ec3341"
+    p.locator("#redo").click()
+    assert selected_text(p)["color"]=="#1964ee"
+    p.locator("#quickTextColor").click()
+    p.locator('#textColorPopover [data-quick-color="#ec3341"]').click()
     assert selected_text(p)["color"]=="#ec3341"
     # Dragging text must move geometry, not force crop/image mode.
     previous=selected_text(p)
@@ -125,6 +173,21 @@ def verify_presets_and_mobile(browser,url,w,h):
         assert selected_text(p)["textStyle"]==style
         assert not p.locator("#quickShape").is_visible()
     assert len([x for x in snapshot(p)["layers"] if x["kind"]=="text"])==5
+    assert p.locator("#textStyles small").count()==0
+    for button in ("quickTextEdit","quickTextStyle","quickTextColor","quickMore"):
+        box=p.locator("#"+button).bounding_box()
+        assert box and box["x"]>=0 and box["x"]+box["width"]<=w+1, (button,box)
+    p.locator("#quickTextEdit").click()
+    assert p.locator("#textEditPopover").is_visible()
+    p.locator("#quickTextValue").fill("手机版修改文字")
+    p.locator("#quickTextApply").click()
+    assert selected_text(p)["text"]=="手机版修改文字"
+    p.locator("#quickTextStyle").click()
+    p.locator('#quickTextStyles [data-quick-text-style="pill"]').click()
+    assert selected_text(p)["textStyle"]=="pill"
+    p.locator("#quickTextColor").click()
+    p.locator('#textColorPopover [data-quick-color="#ec3341"]').click()
+    assert selected_text(p)["color"]=="#ec3341"
     (ROOT/"tests"/"out").mkdir(parents=True,exist_ok=True)
     p.screenshot(path=str(ROOT/"tests"/"out"/f"text-layer-mobile-{w}.png"),full_page=True,animations="disabled")
     # The text preview persists as a vector text layer in export.
