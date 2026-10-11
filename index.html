@@ -4,7 +4,40 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f7f8fa"><title>QRPatch — 精准修复每一枚二维码</title>
 <style>
-:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202633;background:#f7f8fa;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}.app{height:100dvh;min-height:620px;display:grid;grid-template-rows:70px minmax(0,1fr)}header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:#fff;border-bottom:1px solid #e9ecf2}.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:20px;letter-spacing:-.8px}.mark{display:grid;place-items:center;width:34px;height:34px;color:#fff;background:#405de6;border-radius:11px;font-weight:900}.brand small{font-size:10px;letter-spacing:1px;background:#eef2ff;color:#4862e8;border-radius:6px;padding:5px 6px;margin-left:6px}.top-actions,.action-row,.seg,.row{display:flex;align-items:center;gap:9px}.btn{border:1px solid #e5e8ee;border-radius:10px;padding:10px 15px;background:#fff;color:#303747;font-weight:650;font-size:13px;transition:.18s}.btn:hover:not(:disabled){background:#f0f3fd;border-color:#b8c4fa}.btn.primary{background:#405de6;color:#fff;border-color:#405de6;box-shadow:0 4px 13px #405de61d}.btn.primary:hover{background:#304fd7}.btn.quiet{border:0;background:transparent;padding:8px}.shell{min-height:0;display:grid;grid-template-columns:256px minmax(320px,1fr) 300px}.sidebar{background:#fff;overflow:auto;padding:21px;border-right:1px solid #e9ecf2}.sidebar.right{border-right:0;border-left:1px solid #e9ecf2}.eyebrow{font-size:10px;font-weight:800;letter-spacing:1.4px;color:#909aaf;text-transform:uppercase;margin-bottom:15px}.section{margin-bottom:30px}.section-title{font-size:14px;font-weight:750;margin:0 0 12px;display:flex;justify-content:space-between;align-items:center}.drop{border:1.5px dashed #cdd6e9;background:#f8faff;border-radius:13px;padding:23px 12px;text-align:center;cursor:pointer;transition:.2s}.drop:hover{border-color:#526bed;background:#f2f5ff}.drop .big{font-size:24px;color:#526bed;margin-bottom:9px}.drop strong{display:block;font-size:13px}.drop span{display:block;font-size:11px;color:#98a2b6;margin-top:6px;line-height:1.6}.info{font-size:11px;color:#98a2b6;margin:11px 2px;overflow-wrap:anywhere}.layers{display:flex;flex-direction:column;gap:7px}.layer{width:100%;border:1px solid transparent;background:#fff;border-radius:10px;padding:8px;display:flex;align-items:center;text-align:left;gap:11px}.layer:hover{background:#f6f8fd}.layer.active{background:#f0f4ff;border-color:#c8d3ff}.thumb{width:42px;height:42px;flex:none;border:1px solid #e9eaf0;border-radius:7px;object-fit:contain;background:#fff}.layer-copy{min-width:0;flex:1}.layer-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layer-type{font-size:10px;color:#9da5b7;margin-top:5px}.layer-eye{font-size:13px;color:#9da5b7;border:0;background:transparent;padding:5px}.hint{font-size:11px;color:#97a0af;line-height:1.7}.workspace{min-width:0;min-height:0;display:flex;flex-direction:column;background:#f6f7f9}.toolbar{height:61px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8ebf0;gap:12px}.toolbar .name{font-weight:730;font-size:13px}.toolbar .meta{font-size:11px;color:#a2a9b5;margin-top:3px}.toolgroup{display:flex;gap:6px}.iconbtn{min-width:34px;height:34px;border:1px solid #e6eaf0;border-radius:9px;background:#fff;color:#626e84;font-size:15px}.iconbtn:hover{border-color:#aebfff;color:#405de6}.canvas-area{flex:1;min-height:0;position:relative;display:grid;place-items:center;overflow:hidden;padding:35px}.canvas-area.dragover{background:#eaf0ff}.empty{max-width:395px;text-align:center}.empty-art{background:#fff;width:138px;height:138px;border:1px solid #eaedf4;border-radius:28px;display:grid;place-items:center;margin:0 auto 25px;box-shadow:0 18px 45px #25385a0c;font-size:55px}.empty h2{font-size:22px;letter-spacing:-.8px;margin:0 0 9px}.empty p{font-size:13px;color:#9ca5b4;line-height:1.9;margin:0 0 24px}.stage-wrap{position:relative;max-width:100%;max-height:100%;box-shadow:0 16px 65px #202b4930;background:#fff;touch-action:none;user-select:none}.stage-wrap canvas{display:block;width:100%;height:100%;touch-action:none}.selection-tools{max-width:calc(100vw - 40px);flex-wrap:wrap;justify-content:center;position:absolute;z-index:9;display:flex;align-items:center;gap:5px;padding:5px;background:#fffefa;border:1px solid #d9dfec;border-radius:13px;box-shadow:0 11px 28px #131e4052;white-space:nowrap;touch-action:manipulation;font-size:11px;user-select:none}
+:root{font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#202633;background:#f7f8fa;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.35;cursor:not-allowed}.app{height:100dvh;min-height:620px;display:grid;grid-template-rows:70px minmax(0,1fr)}header{display:flex;align-items:center;justify-content:space-between;padding:0 28px;background:#fff;border-bottom:1px solid #e9ecf2}.brand{display:flex;align-items:center;gap:11px;font-weight:800;font-size:20px;letter-spacing:-.8px}.mark{display:grid;place-items:center;width:34px;height:34px;color:#fff;background:#405de6;border-radius:11px;font-weight:900}.brand small{font-size:10px;letter-spacing:1px;background:#eef2ff;color:#4862e8;border-radius:6px;padding:5px 6px;margin-left:6px}.top-actions,.action-row,.seg,.row{display:flex;align-items:center;gap:9px}.btn{border:1px solid #e5e8ee;border-radius:10px;padding:10px 15px;background:#fff;color:#303747;font-weight:650;font-size:13px;transition:.18s}.btn:hover:not(:disabled){background:#f0f3fd;border-color:#b8c4fa}.btn.primary{background:#405de6;color:#fff;border-color:#405de6;box-shadow:0 4px 13px #405de61d}.btn.primary:hover{background:#304fd7}.btn.quiet{border:0;background:transparent;padding:8px}.shell{min-height:0;display:grid;grid-template-columns:256px minmax(320px,1fr) 300px}.sidebar{background:#fff;overflow:auto;padding:21px;border-right:1px solid #e9ecf2}.sidebar.right{border-right:0;border-left:1px solid #e9ecf2}.eyebrow{font-size:10px;font-weight:800;letter-spacing:1.4px;color:#909aaf;text-transform:uppercase;margin-bottom:15px}.section{margin-bottom:30px}.section-title{font-size:14px;font-weight:750;margin:0 0 12px;display:flex;justify-content:space-between;align-items:center}.drop{border:1.5px dashed #cdd6e9;background:#f8faff;border-radius:13px;padding:23px 12px;text-align:center;cursor:pointer;transition:.2s}.drop:hover{border-color:#526bed;background:#f2f5ff}.drop .big{font-size:24px;color:#526bed;margin-bottom:9px}.drop strong{display:block;font-size:13px}.drop span{display:block;font-size:11px;color:#98a2b6;margin-top:6px;line-height:1.6}.info{font-size:11px;color:#98a2b6;margin:11px 2px;overflow-wrap:anywhere}.layers{display:flex;flex-direction:column;gap:7px}.layer{width:100%;border:1px solid transparent;background:#fff;border-radius:10px;padding:8px;display:flex;align-items:center;text-align:left;gap:11px}.layer:hover{background:#f6f8fd}.layer.active{background:#f0f4ff;border-color:#c8d3ff}.thumb{width:42px;height:42px;flex:none;border:1px solid #e9eaf0;border-radius:7px;object-fit:contain;background:#fff}.layer-copy{min-width:0;flex:1}.layer-name{font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.layer-type{font-size:10px;color:#9da5b7;margin-top:5px}.text-entry{display:block;width:100%;resize:vertical;min-height:68px;max-height:150px;padding:10px 11px;border:1px solid #dce3f0;border-radius:10px;background:#fff;color:#1d2a45;font:inherit;line-height:1.55;font-size:13px;outline:none}
+.text-entry:focus{border-color:#506aec;box-shadow:0 0 0 3px #516ef01a}
+.text-colors{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.text-colors input[type=color]{width:35px;height:34px;padding:2px;border:1px solid #dfe5f1;background:white;border-radius:8px;cursor:pointer}
+.text-swatch{width:25px;height:25px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 0 1px #d8deea;background:var(--swatch);cursor:pointer}
+.text-swatch.chosen{box-shadow:0 0 0 2px #315be8}
+.text-style-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.text-style-list button{min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left;padding:9px 10px;background:#fff;border:1px solid #dfe5f0;border-radius:10px;color:#253451;cursor:pointer}
+.text-style-list button.chosen{border-color:#4567e8;background:#eff3ff;box-shadow:0 0 0 1px #4567e8}
+.text-style-list button strong{font-size:12px}.text-style-list button small{font-size:10px;color:#8b97ab}
+.text-style-list button[data-text-style="bold"] strong{font-size:15px;font-weight:900;letter-spacing:-.3px}
+.text-style-list button[data-text-style="outline"] strong{font-size:15px;font-weight:900;color:#e5424b;text-shadow:1px 1px white,-1px -1px white,2px 2px #2440a7}
+.text-style-list button[data-text-style="white-card"] strong{background:#fff;border:1px solid #cbd5e8;border-radius:5px;padding:3px 7px}
+.text-style-list button[data-text-style="pill"] strong{background:#315ee6;color:#fff;padding:4px 9px;border-radius:20px}
+.text-style-list button[data-text-style="caption"] strong{font-size:11px;font-weight:550;color:#7a879e}
+
+.add-text-btn{width:100%;margin-top:13px;min-height:39px}
+.thumb.text-thumb{display:grid;place-items:center;font:bold 22px system-ui,sans-serif;color:#365be5;background:#edf2ff}
+.selection-tools.text-layer-selected #quickCrop,.selection-tools.text-layer-selected #quickShape,.selection-tools.text-layer-selected #quickZoomGroup,.selection-tools.text-layer-selected .tool-divider,.selection-tools.text-layer-selected #quickBacking{display:none!important}
+@media(max-width:650px){
+.sidebar.left #textComposer{min-width:225px;overflow-y:auto;overscroll-behavior:contain;padding-right:7px;scrollbar-width:thin}
+.app,.shell,.workspace,.canvas-area{max-width:100%;min-width:0;box-sizing:border-box}
+.shell{width:100%;overflow:hidden}
+.workspace{width:100%;overflow:hidden}
+.sidebar.left{width:100%;max-width:100%;min-width:0;box-sizing:border-box;overflow-x:auto}
+.sidebar.left .section{flex:0 0 185px}
+.sidebar.left #textComposer{flex:0 0 225px}
+.canvas-area{width:100%;max-width:100%}
+.canvas-area>.selection-tools{box-sizing:border-box}
+
+.canvas-area>#quickTools.text-layer-selected{display:flex;justify-content:space-between;max-width:260px!important;left:auto!important;right:10px!important}
+.canvas-area>#quickTools.text-layer-selected #quickMove{flex:1}
+}
+.layer-eye{font-size:13px;color:#9da5b7;border:0;background:transparent;padding:5px}.hint{font-size:11px;color:#97a0af;line-height:1.7}.workspace{min-width:0;min-height:0;display:flex;flex-direction:column;background:#f6f7f9}.toolbar{height:61px;padding:0 22px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #e8ebf0;gap:12px}.toolbar .name{font-weight:730;font-size:13px}.toolbar .meta{font-size:11px;color:#a2a9b5;margin-top:3px}.toolgroup{display:flex;gap:6px}.iconbtn{min-width:34px;height:34px;border:1px solid #e6eaf0;border-radius:9px;background:#fff;color:#626e84;font-size:15px}.iconbtn:hover{border-color:#aebfff;color:#405de6}.canvas-area{flex:1;min-height:0;position:relative;display:grid;place-items:center;overflow:hidden;padding:35px}.canvas-area.dragover{background:#eaf0ff}.empty{max-width:395px;text-align:center}.empty-art{background:#fff;width:138px;height:138px;border:1px solid #eaedf4;border-radius:28px;display:grid;place-items:center;margin:0 auto 25px;box-shadow:0 18px 45px #25385a0c;font-size:55px}.empty h2{font-size:22px;letter-spacing:-.8px;margin:0 0 9px}.empty p{font-size:13px;color:#9ca5b4;line-height:1.9;margin:0 0 24px}.stage-wrap{position:relative;max-width:100%;max-height:100%;box-shadow:0 16px 65px #202b4930;background:#fff;touch-action:none;user-select:none}.stage-wrap canvas{display:block;width:100%;height:100%;touch-action:none}.selection-tools{max-width:calc(100vw - 40px);flex-wrap:wrap;justify-content:center;position:absolute;z-index:9;display:flex;align-items:center;gap:5px;padding:5px;background:#fffefa;border:1px solid #d9dfec;border-radius:13px;box-shadow:0 11px 28px #131e4052;white-space:nowrap;touch-action:manipulation;font-size:11px;user-select:none}
 .selection-tools[hidden]{display:none}
 .selection-tools button{border:0;border-radius:8px;padding:8px 11px;background:transparent;color:#51617e;font-size:11px;font-weight:700;min-height:32px}
 .selection-tools button:hover{background:#eef2ff;color:#3452d5}
@@ -31,7 +64,7 @@
 .export-panel .save-actions button{flex:1;min-height:46px}
 .export-panel .save-help{font-size:12px;color:#56657e;line-height:1.6;margin:12px 0 0;background:#f1f4fa;padding:10px 12px;border-radius:10px}
 .export-panel .save-close{position:absolute;right:13px;top:12px;border:0;background:#f0f2f7;color:#657089;border-radius:50%;width:36px;height:36px;font-size:20px}
-@media(max-width:650px){.app{height:100dvh;min-height:0;grid-template-rows:62px minmax(0,1fr)}header{padding:0 13px}.brand{font-size:17px}.brand small{display:none}.top-actions .desktop{display:none}#export{min-height:43px;padding:9px 13px}.shell{display:flex;flex-direction:column;min-height:0}.sidebar.left{order:2;border-right:0;border-top:1px solid #e9ecf2;padding:9px 12px;height:140px;flex:none;display:flex;gap:12px}.sidebar.left .section{flex:1;min-width:0;margin:0}.sidebar.left .section-title{font-size:12px;margin:0 0 6px}.sidebar.left .drop{padding:9px 5px}.sidebar.left .drop .big{display:none}.sidebar.left .drop span{display:none}.sidebar.left .eyebrow,.sidebar.left .hint{display:none}.sidebar.left .layers{overflow:auto;max-height:120px}.workspace{order:1;flex:1;min-height:0}.toolbar{height:43px;padding:0 13px}.canvas-area{padding:10px 10px 98px;min-height:0;overflow:hidden}.sidebar.right{top:62px}.bottom{height:32px;padding:0 12px}.bottom .shortcut{display:none}.bottom span:last-child{display:none}
+@media(max-width:650px){.app{height:100dvh;min-height:0;grid-template-rows:62px minmax(0,1fr)}header{padding:0 13px}.brand{font-size:17px}.brand small{display:none}.top-actions .desktop{display:none}#export{min-height:43px;padding:9px 13px}.shell{display:flex;flex-direction:column;min-height:0}.sidebar.left{order:2;border-right:0;border-top:1px solid #e9ecf2;padding:9px 12px;height:192px;flex:none;display:flex;gap:12px;overflow-x:auto;scrollbar-width:thin}.sidebar.left .section{flex:1;min-width:0;margin:0}.sidebar.left .section-title{font-size:12px;margin:0 0 6px}.sidebar.left .drop{padding:9px 5px}.sidebar.left .drop .big{display:none}.sidebar.left .drop span{display:none}.sidebar.left .eyebrow,.sidebar.left .hint{display:none}.sidebar.left .layers{overflow:auto;max-height:120px}.workspace{order:1;flex:1;min-height:0}.toolbar{height:43px;padding:0 13px}.canvas-area{padding:10px 10px 98px;min-height:0;overflow:hidden}.sidebar.right{top:62px}.bottom{height:32px;padding:0 12px}.bottom .shortcut{display:none}.bottom span:last-child{display:none}
 .canvas-area>.selection-tools{position:absolute!important;left:10px!important;right:10px!important;top:auto!important;bottom:calc(8px + env(safe-area-inset-bottom,0px))!important;width:auto!important;max-width:none!important;transform:none!important;margin:0;box-shadow:0 8px 22px #17234338;border-radius:14px;z-index:20}
 .canvas-area>#quickTools{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1.35fr) 44px;gap:4px;padding:6px}
 .canvas-area>.selection-tools[hidden]{display:none!important}
@@ -58,6 +91,29 @@
 <aside class="sidebar left">
 <div class="section"><div class="eyebrow">ASSETS · 素材</div><h3 class="section-title">背景图片</h3><div class="drop" id="bgDrop" role="button" tabindex="0"><div class="big">▧</div><strong>点击或拖入背景图片</strong><span>PNG · JPG · WEBP<br>支持原始尺寸导出</span></div><div class="info" id="bgInfo">尚未上传背景</div></div>
 <div class="section"><h3 class="section-title">图片图层 <span id="layerCount">0</span></h3><div class="drop" id="addDrop" role="button" tabindex="0"><div class="big">⊞</div><strong>＋ 添加二维码或图片</strong><span>可添加多个 · 支持裁切</span></div><div class="layers" id="layers" style="margin-top:13px"></div></div>
+<div class="section" id="textComposer">
+<h3 class="section-title">✎ 添加文字</h3>
+<label class="field" for="textContent">说明文字</label>
+<textarea id="textContent" class="text-entry" maxlength="80" rows="2" placeholder="扫码报名&#10;加入我们"></textarea>
+<label class="field" for="textColor" style="margin-top:12px">文字颜色</label>
+<div class="text-colors"><input id="textColor" aria-label="选择文字颜色" title="自定义文字颜色" type="color" value="#182c5c">
+<button type="button" class="text-swatch" data-color="#182c5c" aria-label="深蓝色" style="--swatch:#182c5c"></button>
+<button type="button" class="text-swatch" data-color="#ffffff" aria-label="白色" style="--swatch:#ffffff"></button>
+<button type="button" class="text-swatch" data-color="#ec3341" aria-label="红色" style="--swatch:#ec3341"></button>
+<button type="button" class="text-swatch" data-color="#1964ee" aria-label="蓝色" style="--swatch:#1964ee"></button>
+<button type="button" class="text-swatch" data-color="#182026" aria-label="黑色" style="--swatch:#182026"></button>
+</div>
+<label class="field" style="margin-top:12px" for="textStyle">文字样式</label>
+<div id="textStyles" class="text-style-list" role="radiogroup" aria-label="文字样式">
+<button type="button" data-text-style="bold" class="chosen" role="radio" aria-checked="true"><strong>标题</strong><small>醒目粗体</small></button>
+<button type="button" data-text-style="outline" role="radio" aria-checked="false"><strong>描边</strong><small>适合花背景</small></button>
+<button type="button" data-text-style="white-card" role="radio" aria-checked="false"><strong>白底卡片</strong><small>圆角留白</small></button>
+<button type="button" data-text-style="pill" role="radio" aria-checked="false"><strong>胶囊</strong><small>强调操作</small></button>
+<button type="button" data-text-style="caption" role="radio" aria-checked="false"><strong>说明</strong><small>轻量注释</small></button>
+</div>
+<button id="addText" type="button" class="btn primary add-text-btn">＋ 添加到画布</button>
+<p class="subnote">文字将成为独立图层。添加后拖动定位、拉动四角缩放，不与二维码绑定。</p>
+</div>
 </aside>
 <main class="workspace">
 <div class="toolbar"><div><div class="name" id="docName">未命名画布</div><div class="meta" id="docMeta">从上传一张图片开始</div></div><div class="toolgroup"><button class="iconbtn" title="撤销 Ctrl/Cmd+Z" id="undo">↶</button><button class="iconbtn" title="重做 Ctrl/Cmd+Shift+Z" id="redo">↷</button><button class="iconbtn mobile-tabs" title="编辑属性" id="showSettings">☷</button></div></div>
@@ -95,9 +151,17 @@
 <aside class="sidebar right" id="settings"><div class="eyebrow">INSPECTOR · 编辑属性</div><h3 class="section-title">图层属性 <button class="btn quiet mobile-tabs" id="closeSettings">✕</button></h3><div id="noSelection" class="notice">选中画布中的图片或左侧图层，即可编辑位置、大小和裁切样式。</div><div id="properties" hidden>
 <div class="controls">
 <div class="control"><label class="field" for="propX">位置 X</label><input id="propX" type="number"></div><div class="control"><label class="field" for="propY">位置 Y</label><input id="propY" type="number"></div><div class="control"><label class="field" for="propW">宽度</label><input id="propW" type="number" min="1"></div><div class="control"><label class="field" for="propH">高度</label><input id="propH" type="number" min="1"></div>
-</div><hr class="divider"><div class="subnote" id="cropModeHelp">选中画布图片后，使用图片旁悬浮工具条选择形状及整体／裁切模式。右侧保留精确尺寸、留白和图层参数。</div><div class="subnote" id="cropWarning">二维码建议使用完整方形，避免裁掉定位点造成扫码失败。</div><hr class="divider">
+</div>
+<div id="textInspector" hidden>
+<hr class="divider"><h3 class="section-title">文字内容</h3>
+<label class="field" for="textEditContent">选中文本</label>
+<textarea class="text-entry" id="textEditContent" maxlength="80" rows="3"></textarea>
+<p class="subnote">修改后点击画布空白处或离开输入框即可更新。</p>
+</div>
+<div id="imageInspector">
+<hr class="divider"><div class="subnote" id="cropModeHelp">选中画布图片后，使用图片旁悬浮工具条选择形状及整体／裁切模式。右侧保留精确尺寸、留白和图层参数。</div><div class="subnote" id="cropWarning">二维码建议使用完整方形，避免裁掉定位点造成扫码失败。</div><hr class="divider">
 <div class="inline"><label for="lock">锁定裁切框比例</label><input type="checkbox" id="lock" checked></div><hr class="divider"><div class="inline"><label for="backing">白色背景衬底</label><input type="checkbox" id="backing" checked></div><div class="control" style="margin-top:16px"><label class="field" for="fit">图片适配方式</label><select id="fit"><option value="contain">完整显示 · Contain</option><option value="cover">铺满裁切 · Cover</option></select></div><div class="control" style="margin-top:14px"><label class="field" for="padding">安全留白（占宽度 %）</label><input id="padding" type="number" min="0" max="30" step="1" value="8"></div><div class="subnote">二维码建议选择完整显示，保留白底与安全留白；普通头像可选择铺满裁切。</div><div class="control" style="margin-top:15px"><label class="field" for="imageZoom">框内图片缩放 <span id="zoomValue">100%</span></label><input type="range" id="imageZoom" min="25" max="600" step="5" value="100" style="width:100%"></div><div class="controls" style="margin-top:15px"><div class="control"><label class="field" for="offsetX">裁切水平偏移 %</label><input id="offsetX" type="number" min="-100" max="100" value="0"></div><div class="control"><label class="field" for="offsetY">裁切垂直偏移 %</label><input id="offsetY" type="number" min="-100" max="100" value="0"></div></div><p class="subnote">在 Cover 模式下调整图片裁切焦点，不影响外部裁切框的位置。</p><div class="subnote">覆盖原图中的错误二维码时，建议保留白色衬底。</div><hr class="divider">
-<h3 class="section-title">图层顺序</h3><div class="iconline"><button class="btn" id="layerDown">↓ 下移</button><button class="btn" id="layerUp">↑ 上移</button></div><div class="iconline" style="margin-top:9px"><button class="btn" id="duplicate">复制</button><button class="btn" id="delete">删除</button></div>
+</div><h3 class="section-title">图层顺序</h3><div class="iconline"><button class="btn" id="layerDown">↓ 下移</button><button class="btn" id="layerUp">↑ 上移</button></div><div class="iconline" style="margin-top:9px"><button class="btn" id="duplicate">复制</button><button class="btn" id="delete">删除</button></div>
 </div><hr class="divider"><div class="notice">✦ 所有图片均在浏览器中处理，不会上传至服务器。导出时保留背景图片原有像素尺寸。</div><p class="status" id="status" role="status"></p></aside>
 </div></div>
 <div class="export-sheet" id="saveSheet" role="dialog" aria-modal="true" aria-labelledby="saveTitle" hidden>
@@ -143,9 +207,115 @@ async function addFiles(list){if(!background){alert("请先上传背景图片");
 function placeMobileToolbars(){const host=window.matchMedia("(max-width:650px)").matches?$("canvasArea"):$("stage");for(const t of [$("quickTools"),$("bgTools")])if(t.parentElement!==host)host.appendChild(t)}
 function layout(){placeMobileToolbars();if(!background)return;const area=$("canvasArea"),pad=window.innerWidth<650?30:70;scale=Math.min((area.clientWidth-pad)/background.width,(area.clientHeight-pad)/background.height,1);if(!Number.isFinite(scale)||scale<=0)scale=.1;const w=Math.max(1,Math.round(background.width*scale)),h=Math.max(1,Math.round(background.height*scale));$("stage").style.width=w+"px";$("stage").style.height=h+"px";const c=$("canvas");c.width=w*devicePixelRatio;c.height=h*devicePixelRatio;$("zoomInfo").textContent="画布缩放 "+Math.round(scale*100)+"%";draw()}
 function shapePath(g,l){g.beginPath();if(l.shape==="circle"){g.ellipse(l.x+l.w/2,l.y+l.h/2,l.w/2,l.h/2,0,0,Math.PI*2)}else if(l.shape==="rounded"){const r=Math.min(l.w,l.h)*.12;g.roundRect(l.x,l.y,l.w,l.h,r)}else g.rect(l.x,l.y,l.w,l.h)}
-function paint(g,editing){g.clearRect(0,0,background.width,background.height);g.save();g.filter=`brightness(${bgEdits.brightness}%) contrast(${bgEdits.contrast}%)`;g.drawImage(background.image,0,0,background.width,background.height);g.restore();for(const l of layers){if(!l.visible||!l.image)continue;g.save();shapePath(g,l);g.clip();if(l.backing){g.fillStyle="#fff";g.fillRect(l.x,l.y,l.w,l.h)}const pad=l.backing?Math.min(.3,Math.max(0,Number(l.padding??8)/100)):0;const inner={x:l.x+l.w*pad,y:l.y+l.h*pad,w:l.w*(1-2*pad),h:l.h*(1-2*pad)};if(l.imageRect){const a=l.imageRect;g.drawImage(l.image,a.x,a.y,a.w,a.h)}else{const crop=l.crop||{x:0,y:0,w:1,h:1};const src={x:crop.x*l.image.naturalWidth,y:crop.y*l.image.naturalHeight,w:crop.w*l.image.naturalWidth,h:crop.h*l.image.naturalHeight};const iw=src.w,ih=src.h,aspect=iw/ih,boxAspect=inner.w/inner.h;if((l.fit||"contain")==="cover"){const t=Math.max(inner.w/iw,inner.h/ih),dw=iw*t,dh=ih*t;g.drawImage(l.image,src.x,src.y,src.w,src.h,inner.x+(inner.w-dw)/2,inner.y+(inner.h-dh)/2,dw,dh)}else{const t=Math.min(inner.w/iw,inner.h/ih),dw=iw*t,dh=ih*t;g.drawImage(l.image,src.x,src.y,src.w,src.h,inner.x+(inner.w-dw)/2,inner.y+(inner.h-dh)/2,dw,dh)}}g.restore();if(editing&&selected===l.id){g.save();if(cropMode){ensureImageRect(l);const a=l.imageRect;g.save();g.beginPath();g.rect(0,0,background.width,background.height);if(l.shape==="circle")g.ellipse(l.x+l.w/2,l.y+l.h/2,l.w/2,l.h/2,0,0,Math.PI*2);else if(l.shape==="rounded")g.roundRect(l.x,l.y,l.w,l.h,Math.min(l.w,l.h)*.12);else g.rect(l.x,l.y,l.w,l.h);g.clip("evenodd");g.globalAlpha=.34;g.drawImage(l.image,a.x,a.y,a.w,a.h);g.restore();g.strokeStyle="#f6a946";g.lineWidth=1.4/scale;g.setLineDash([7/scale,4/scale]);g.strokeRect(a.x,a.y,a.w,a.h);g.setLineDash([]);g.fillStyle="#4767ed18";shapePath(g,l);g.fill()}g.strokeStyle="#4c67ed";g.lineWidth=2/scale;g.setLineDash([5/scale,3/scale]);g.strokeRect(l.x,l.y,l.w,l.h);g.setLineDash([]);if(cropMode){g.strokeStyle="#f3f6ff";g.lineWidth=3/scale;shapePath(g,l);g.stroke();g.strokeStyle="#4569f2";g.lineWidth=1.6/scale;shapePath(g,l);g.stroke()}for(const p of corners(l)){g.beginPath();g.fillStyle="#fff";g.strokeStyle="#4c67ed";g.lineWidth=2/scale;g.roundRect(p.x-5/scale,p.y-5/scale,10/scale,10/scale,2/scale);g.fill();g.stroke()}g.restore()}}}
+
+const TEXT_STYLES={
+ bold:{label:"标题",size:46,weight:800,padX:4,padY:6,lineRatio:1.23},
+ outline:{label:"描边",size:46,weight:800,padX:8,padY:8,lineRatio:1.23},
+ "white-card":{label:"白底卡片",size:36,weight:750,padX:24,padY:15,lineRatio:1.3},
+ pill:{label:"胶囊",size:36,weight:750,padX:28,padY:17,lineRatio:1.28},
+ caption:{label:"说明",size:28,weight:600,padX:5,padY:6,lineRatio:1.35}
+};
+let chosenTextStyle="bold";
+const textFont=p=>p.weight+" "+p.size+'px system-ui,-apple-system,"Microsoft YaHei",sans-serif';
+function textLines(text){return String(text||"").replace(/\r/g,"").split("\n").slice(0,4).map(x=>x.trim());}
+function measureTextGeometry(text,style){
+ const preset=TEXT_STYLES[style]||TEXT_STYLES.bold;
+ const lines=textLines(text);
+ ctx.save();ctx.font=textFont(preset);
+ const width=Math.max(1,...lines.map(x=>ctx.measureText(x).width));ctx.restore();
+ const lineHeight=preset.size*preset.lineRatio;
+ return {baseW:Math.ceil(width+2*preset.padX),baseH:Math.ceil(lineHeight*lines.length+2*preset.padY)};
+}
+function legibleCardFill(hex){
+ const v=String(hex||"#182c5c").replace("#","");if(!/^[0-9a-f]{6}$/i.test(v))return "#fff";
+ const r=parseInt(v.slice(0,2),16),g=parseInt(v.slice(2,4),16),b=parseInt(v.slice(4,6),16);
+ return (r*.2126+g*.7152+b*.0722)>175?"#17264b":"#ffffff";
+}
+function drawTextLayer(g,l){
+ const p=TEXT_STYLES[l.textStyle]||TEXT_STYLES.bold;
+ if(!Number.isFinite(l.baseW)||!Number.isFinite(l.baseH)||l.baseW<=0||l.baseH<=0)return;
+ g.save();g.translate(l.x,l.y);g.scale(l.w/l.baseW,l.h/l.baseH);
+ const padding=p.padX,lines=textLines(l.text);
+ const color=l.color||"#182c5c";
+ if(l.textStyle==="white-card"||l.textStyle==="pill"){
+   g.beginPath();
+   const radius=l.textStyle==="pill"?Math.min(l.baseH/2,40):11;
+   g.roundRect(0,0,l.baseW,l.baseH,radius);
+   g.fillStyle=l.textStyle==="white-card"?legibleCardFill(color):legibleCardFill(color)==="#ffffff"?"#e6efff":"#2458d5";
+   g.fill();
+   if(l.textStyle==="white-card"){g.strokeStyle="#d5deed";g.lineWidth=1.4;g.stroke()}
+ }
+ g.font=textFont(p);g.textAlign="center";g.textBaseline="middle";g.lineJoin="round";
+ for(let i=0;i<lines.length;i++){
+   const y=p.padY+p.size*p.lineRatio*(i+.5),x=l.baseW/2;
+   if(l.textStyle==="outline"){g.lineWidth=7;g.strokeStyle=legibleCardFill(color)==="#ffffff"?"#ffffff":"#17264b";g.strokeText(lines[i],x,y)}
+   g.fillStyle=color;
+   g.fillText(lines[i],x,y);
+ }
+ g.restore();
+}
+function drawTextSelection(g,l){
+ g.save();g.strokeStyle="#4c67ed";g.lineWidth=2/scale;
+ g.setLineDash([5/scale,3/scale]);g.strokeRect(l.x,l.y,l.w,l.h);g.setLineDash([]);
+ for(const p of corners(l)){
+  g.beginPath();g.fillStyle="#fff";g.strokeStyle="#4c67ed";g.lineWidth=2/scale;
+  g.roundRect(p.x-5/scale,p.y-5/scale,10/scale,10/scale,2/scale);g.fill();g.stroke();
+ }
+ g.restore();
+}
+function addTextLayer(){
+ if(!background){status("请先上传背景图，再添加文字");return}
+ const content=$("textContent").value.trim();if(!content){$("textContent").focus();status("请先输入文字");return}
+ if(content.split("\n").length>4){$("textContent").focus();status("文字最多支持 4 行，请精简后再添加");return}
+ const geom=measureTextGeometry(content,chosenTextStyle);
+ const factor=Math.min(1,background.width*.68/geom.baseW,background.height*.30/geom.baseH);
+ const w=Math.max(10,geom.baseW*factor),h=Math.max(10,geom.baseH*factor);
+ commit();
+ const l={id:"layer-"+(++seq),kind:"text",name:content.replace(/\n/g," ").slice(0,22),text:content,
+   color:$("textColor").value,textStyle:chosenTextStyle,...geom,
+   x:Math.round((background.width-w)/2),y:Math.round((background.height-h)/2),
+   w:Math.round(w),h:Math.round(h),lock:true,visible:true};
+ layers.push(l);selected=l.id;cropMode=false;backgroundSelected=false;closeQuickMenus();sync();
+ status("已添加文字图层，可拖动和拉动四角缩放");
+}
+$("addText").onclick=addTextLayer;
+$("textStyles").onclick=e=>{
+ const b=e.target.closest("button[data-text-style]");if(!b||!TEXT_STYLES[b.dataset.textStyle])return;
+ chosenTextStyle=b.dataset.textStyle;
+ for(const item of $("textStyles").querySelectorAll("button[data-text-style]")){
+  const chosen=item.dataset.textStyle===chosenTextStyle;
+  item.classList.toggle("chosen",chosen);item.setAttribute("aria-checked",String(chosen));
+ }
+};
+$("textColor").oninput=()=>{
+ for(const b of document.querySelectorAll(".text-swatch"))b.classList.toggle("chosen",b.dataset.color.toLowerCase()===$("textColor").value.toLowerCase());
+};
+document.querySelector(".text-colors").addEventListener("click",e=>{
+ const b=e.target.closest("button[data-color]");if(!b)return;
+ $("textColor").value=b.dataset.color;$("textColor").dispatchEvent(new Event("input",{bubbles:true}));
+});
+$("textEditContent").onchange=e=>{
+ const l=get();if(!l||l.kind!=="text")return;
+ const value=e.target.value.trim();
+ if(!value){e.target.value=l.text;status("文字不能留空");return}
+ if(value.split("\n").length>4){e.target.value=l.text;status("文字最多支持 4 行，请精简后再更新");return}
+ if(value===l.text)return;
+ mutate(x=>{
+  const oldBaseW=x.baseW,oldBaseH=x.baseH;
+  const sz=measureTextGeometry(value,x.textStyle);
+  x.text=value;x.name=value.replace(/\n/g," ").slice(0,22);
+  x.baseW=sz.baseW;x.baseH=sz.baseH;
+  // Maintain the user's existing visual scale and center when text content changes.
+  const newW=x.w*sz.baseW/oldBaseW,newH=x.h*sz.baseH/oldBaseH;
+  x.x+=(x.w-newW)/2;x.y+=(x.h-newH)/2;x.w=newW;x.h=newH;
+ });
+};
+
+function paint(g,editing){g.clearRect(0,0,background.width,background.height);g.save();g.filter=`brightness(${bgEdits.brightness}%) contrast(${bgEdits.contrast}%)`;g.drawImage(background.image,0,0,background.width,background.height);g.restore();for(const l of layers){if(!l.visible)continue;if(l.kind==="text"){drawTextLayer(g,l);if(editing&&selected===l.id)drawTextSelection(g,l);continue}if(!l.image)continue;g.save();shapePath(g,l);g.clip();if(l.backing){g.fillStyle="#fff";g.fillRect(l.x,l.y,l.w,l.h)}const pad=l.backing?Math.min(.3,Math.max(0,Number(l.padding??8)/100)):0;const inner={x:l.x+l.w*pad,y:l.y+l.h*pad,w:l.w*(1-2*pad),h:l.h*(1-2*pad)};if(l.imageRect){const a=l.imageRect;g.drawImage(l.image,a.x,a.y,a.w,a.h)}else{const crop=l.crop||{x:0,y:0,w:1,h:1};const src={x:crop.x*l.image.naturalWidth,y:crop.y*l.image.naturalHeight,w:crop.w*l.image.naturalWidth,h:crop.h*l.image.naturalHeight};const iw=src.w,ih=src.h,aspect=iw/ih,boxAspect=inner.w/inner.h;if((l.fit||"contain")==="cover"){const t=Math.max(inner.w/iw,inner.h/ih),dw=iw*t,dh=ih*t;g.drawImage(l.image,src.x,src.y,src.w,src.h,inner.x+(inner.w-dw)/2,inner.y+(inner.h-dh)/2,dw,dh)}else{const t=Math.min(inner.w/iw,inner.h/ih),dw=iw*t,dh=ih*t;g.drawImage(l.image,src.x,src.y,src.w,src.h,inner.x+(inner.w-dw)/2,inner.y+(inner.h-dh)/2,dw,dh)}}g.restore();if(editing&&selected===l.id){g.save();if(cropMode){ensureImageRect(l);const a=l.imageRect;g.save();g.beginPath();g.rect(0,0,background.width,background.height);if(l.shape==="circle")g.ellipse(l.x+l.w/2,l.y+l.h/2,l.w/2,l.h/2,0,0,Math.PI*2);else if(l.shape==="rounded")g.roundRect(l.x,l.y,l.w,l.h,Math.min(l.w,l.h)*.12);else g.rect(l.x,l.y,l.w,l.h);g.clip("evenodd");g.globalAlpha=.34;g.drawImage(l.image,a.x,a.y,a.w,a.h);g.restore();g.strokeStyle="#f6a946";g.lineWidth=1.4/scale;g.setLineDash([7/scale,4/scale]);g.strokeRect(a.x,a.y,a.w,a.h);g.setLineDash([]);g.fillStyle="#4767ed18";shapePath(g,l);g.fill()}g.strokeStyle="#4c67ed";g.lineWidth=2/scale;g.setLineDash([5/scale,3/scale]);g.strokeRect(l.x,l.y,l.w,l.h);g.setLineDash([]);if(cropMode){g.strokeStyle="#f3f6ff";g.lineWidth=3/scale;shapePath(g,l);g.stroke();g.strokeStyle="#4569f2";g.lineWidth=1.6/scale;shapePath(g,l);g.stroke()}for(const p of corners(l)){g.beginPath();g.fillStyle="#fff";g.strokeStyle="#4c67ed";g.lineWidth=2/scale;g.roundRect(p.x-5/scale,p.y-5/scale,10/scale,10/scale,2/scale);g.fill();g.stroke()}g.restore()}}}
 function positionQuickTools(){
  const t=$("quickTools"),bt=$("bgTools"),l=get();
+ t.classList.toggle("text-layer-selected",l?.kind==="text");
+ $("quickMove").textContent=l?.kind==="text"?"↗ 移动缩放":"↗ 整体";
  $("bgBrightness").value=bgEdits.brightness;$("bgContrast").value=bgEdits.contrast;
  $("bgBrightnessLabel").textContent=bgEdits.brightness+"%";$("bgContrastLabel").textContent=bgEdits.contrast+"%";
  if(!background||$("stage").hidden){t.hidden=true;bt.hidden=true;return}
@@ -171,7 +341,7 @@ function draw(){if(!background)return;ctx.setTransform(1,0,0,1,0,0);ctx.clearRec
 function corners(l){return[{key:"nw",x:l.x,y:l.y},{key:"ne",x:l.x+l.w,y:l.y},{key:"sw",x:l.x,y:l.y+l.h},{key:"se",x:l.x+l.w,y:l.y+l.h}]}
 function point(e){const r=$("canvas").getBoundingClientRect();return{x:(e.clientX-r.left)/scale,y:(e.clientY-r.top)/scale}}
 function hit(x,y){for(let i=layers.length-1;i>=0;i--){const l=layers[i];if(l.visible&&x>=l.x&&y>=l.y&&x<=l.x+l.w&&y<=l.y+l.h)return l}return null}
-function ensureImageRect(l){if(l.imageRect)return;const pad=l.backing?Math.max(0,Math.min(.3,Number(l.padding??8)/100)):0;const bw=l.w*(1-2*pad),bh=l.h*(1-2*pad),ratio=l.image.naturalWidth/l.image.naturalHeight;const qr=l.kind==="qr";const factor=(qr?Math.min:Math.max)(bw/l.image.naturalWidth,bh/l.image.naturalHeight);const w=l.image.naturalWidth*factor,h=l.image.naturalHeight*factor;l.imageRect={x:l.x+(l.w-w)/2,y:l.y+(l.h-h)/2,w,h};l.imageZoom=1;l.fit=l.kind==="qr"?"contain":"cover"}
+function ensureImageRect(l){if(l.kind==="text")return;if(l.imageRect)return;const pad=l.backing?Math.max(0,Math.min(.3,Number(l.padding??8)/100)):0;const bw=l.w*(1-2*pad),bh=l.h*(1-2*pad),ratio=l.image.naturalWidth/l.image.naturalHeight;const qr=l.kind==="qr";const factor=(qr?Math.min:Math.max)(bw/l.image.naturalWidth,bh/l.image.naturalHeight);const w=l.image.naturalWidth*factor,h=l.image.naturalHeight*factor;l.imageRect={x:l.x+(l.w-w)/2,y:l.y+(l.h-h)/2,w,h};l.imageZoom=1;l.fit=l.kind==="qr"?"contain":"cover"}
 function startDrag(e){if(!background)return;const p=point(e),l=get();let handle=null;if(l){for(const c of corners(l)){if(Math.hypot(p.x-c.x,p.y-c.y)<(window.matchMedia("(max-width:650px)").matches?19:12)/scale){handle=c.key;break}}}const target=handle?l:hit(p.x,p.y);if(selected!==target?.id)cropMode=false;selected=target?.id||null;backgroundSelected=!target;closeQuickMenus();if(target){commit();drag={id:target.id,handle,mode:cropMode&&!handle?"crop":"move",start:p,orig:{x:target.x,y:target.y,w:target.w,h:target.h,img:target.imageRect?{...target.imageRect}:null}};$("stage").setPointerCapture(e.pointerId)}sync()}
 
 function frameTransformImage(img,oldFrame,newFrame){
@@ -198,7 +368,7 @@ function moveDrag(e){
   const p=point(e),l=get();if(!l)return;
   const dx=p.x-drag.start.x,dy=p.y-drag.start.y,o=drag.orig;
   if(!drag.handle){
-    if(drag.mode==="crop"){
+    if(drag.mode==="crop"&&l.kind!=="text"){
       ensureImageRect(l);
       const img=o.img||l.imageRect;
       l.imageRect={...img,x:img.x+dx,y:img.y+dy};
@@ -219,15 +389,58 @@ function moveDrag(e){
       if(drag.handle.includes("w"))left=right-w;else right=left+w;
       if(drag.handle.includes("n"))top=bottom-h;else bottom=top+h;
     }
-    applyFrame(l,o,{x:left,y:top,w,h},cropMode);
+    applyFrame(l,o,{x:left,y:top,w,h},cropMode&&l.kind!=="text");
   }
   draw();properties();
 }
 
 function endDrag(){drag=null;renderLayers()}
 function sync(){renderLayers();properties();draw();updateHistory()}
-function renderLayers(){$("layerCount").textContent=layers.length;const holder=$("layers");holder.replaceChildren();for(const l of [...layers].reverse()){const b=document.createElement("div");b.className="layer"+(selected===l.id?" active":"");b.setAttribute("role","button");b.tabIndex=0;const img=document.createElement("img");img.className="thumb";img.src=l.url;img.alt="";const copy=document.createElement("div");copy.className="layer-copy";const nm=document.createElement("div");nm.className="layer-name";nm.textContent=l.name;const typ=document.createElement("div");typ.className="layer-type";typ.textContent=l.kind==="qr"?"二维码素材":"图片素材";copy.append(nm,typ);const eye=document.createElement("button");eye.className="layer-eye";eye.title=l.visible?"隐藏图层":"显示图层";eye.textContent=l.visible?"◉":"◌";eye.onclick=e=>{e.stopPropagation();commit();l.visible=!l.visible;sync()};b.append(img,copy,eye);b.onclick=()=>{if(selected!==l.id)cropMode=false;selected=l.id;backgroundSelected=false;closeQuickMenus();sync()};b.onkeydown=e=>{if(e.key==="Enter"){if(selected!==l.id)cropMode=false;selected=l.id;backgroundSelected=false;closeQuickMenus();sync()}};holder.append(b)}}
-function properties(){const l=get();$("properties").hidden=!l;$("noSelection").hidden=!!l;if(!l){$("noSelection").textContent=backgroundSelected?"背景已选中：通过画布上方的悬浮工具条更换图片或调整亮度、对比度。":"选中图片即可编辑；点击画布空白背景可显示背景快捷工具条。";return}for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]])$(id).value=Math.round(l[k]);$("lock").checked=l.lock;$("backing").checked=l.backing;$("fit").value=l.fit||"contain";$("fit").closest(".control").hidden=!!l.imageRect;$("offsetX").closest(".controls").hidden=!!l.imageRect;$("padding").value=l.padding??8;$("offsetX").value=l.offsetX??0;$("offsetY").value=l.offsetY??0;$("imageZoom").value=Math.round((l.imageZoom||1)*100);$("zoomValue").textContent=Math.round((l.imageZoom||1)*100)+"%";$("cropWarning").textContent=l.shape==="circle"?"注意：圆形裁切可能破坏二维码，请仅用于头像、Logo 或装饰图片。":"二维码建议保持完整方形，避免裁掉定位点导致无法扫描。"}
+function renderLayers(){
+ $("layerCount").textContent=layers.length;
+ const holder=$("layers");holder.replaceChildren();
+ for(const l of [...layers].reverse()){
+  const b=document.createElement("div");
+  b.className="layer"+(selected===l.id?" active":"");
+  b.setAttribute("role","button");b.tabIndex=0;
+  let thumb;
+  if(l.kind==="text"){thumb=document.createElement("span");thumb.className="thumb text-thumb";thumb.textContent="T";}
+  else{thumb=document.createElement("img");thumb.className="thumb";thumb.src=l.url;thumb.alt="";}
+  const copy=document.createElement("div");copy.className="layer-copy";
+  const nm=document.createElement("div");nm.className="layer-name";nm.textContent=l.name;
+  const typ=document.createElement("div");typ.className="layer-type";
+  typ.textContent=l.kind==="text"?"文字图层 · "+(TEXT_STYLES[l.textStyle]?.label||"文字"):l.kind==="qr"?"二维码素材":"图片素材";
+  copy.append(nm,typ);
+  const eye=document.createElement("button");eye.className="layer-eye";
+  eye.title=l.visible?"隐藏图层":"显示图层";eye.textContent=l.visible?"◉":"◌";
+  eye.onclick=e=>{e.stopPropagation();commit();l.visible=!l.visible;sync()};
+  b.append(thumb,copy,eye);
+  const select=()=>{if(selected!==l.id)cropMode=false;selected=l.id;backgroundSelected=false;closeQuickMenus();sync()};
+  b.onclick=select;b.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();select()}};
+  holder.append(b);
+ }
+}
+function properties(){
+ const l=get();
+ $("properties").hidden=!l;$("noSelection").hidden=!!l;
+ if(!l){$("noSelection").textContent=backgroundSelected?"背景已选中：通过画布悬浮工具条更换图片或调整亮度、对比度。":"从左侧添加图片或文字；点击画布上的图层进行定位。";return}
+ for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]])$(id).value=Math.round(l[k]);
+ $("lock").checked=!!l.lock;
+ const isText=l.kind==="text";
+ $("imageInspector").hidden=isText;
+ $("textInspector").hidden=!isText;
+ if(isText){
+  if(document.activeElement!==$("textEditContent"))$("textEditContent").value=l.text;
+  return;
+ }
+ $("backing").checked=l.backing;$("fit").value=l.fit||"contain";
+ $("fit").closest(".control").hidden=!!l.imageRect;
+ $("offsetX").closest(".controls").hidden=!!l.imageRect;
+ $("padding").value=l.padding??8;$("offsetX").value=l.offsetX??0;$("offsetY").value=l.offsetY??0;
+ $("imageZoom").value=Math.round((l.imageZoom||1)*100);
+ $("zoomValue").textContent=Math.round((l.imageZoom||1)*100)+"%";
+ $("cropWarning").textContent=l.shape==="circle"?"注意：圆形裁切可能破坏二维码，请仅用于头像、Logo 或装饰图片。":"二维码建议保持完整方形，避免裁掉定位点导致无法扫描。";
+}
 function mutate(fn){const l=get();if(!l)return;commit();fn(l);sync()}
 for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]]){
   $(id).addEventListener("change",e=>mutate(l=>{
@@ -248,10 +461,10 @@ for(const [k,id] of [["x","propX"],["y","propY"],["w","propW"],["h","propH"]]){
   }));
 }
 const shapeNames={square:"□ 方形",rounded:"▢ 圆角",circle:"◯ 圆形"};
-function setLayerShape(shape){if(!shapeNames[shape]||!get())return;mutate(l=>{ensureImageRect(l);l.shape=shape;cropMode=true;if(shape==="circle"||shape==="square"){const side=Math.min(l.w,l.h),cx=l.x+l.w/2,cy=l.y+l.h/2;l.x=cx-side/2;l.y=cy-side/2;l.w=side;l.h=side;l.lock=true}if(shape==="circle")status("圆形裁切适用于头像、Logo 等素材，可能破坏二维码扫码。")});closeQuickMenus()}
+function setLayerShape(shape){if(!shapeNames[shape]||!get()||get().kind==="text")return;mutate(l=>{ensureImageRect(l);l.shape=shape;cropMode=true;if(shape==="circle"||shape==="square"){const side=Math.min(l.w,l.h),cx=l.x+l.w/2,cy=l.y+l.h/2;l.x=cx-side/2;l.y=cy-side/2;l.w=side;l.h=side;l.lock=true}if(shape==="circle")status("圆形裁切适用于头像、Logo 等素材，可能破坏二维码扫码。")});closeQuickMenus()}
 
 function setCropMode(value){
-  const l=get();if(!l)return;
+  const l=get();if(!l||l.kind==="text")return;
   if(value&&!cropMode){commit();ensureImageRect(l)}
   cropMode=!!value;sync();
 }
@@ -283,6 +496,7 @@ $("bgTools").addEventListener("pointermove",e=>e.stopPropagation());
 $("bgTools").addEventListener("pointerup",e=>e.stopPropagation());
 
 function zoomImage(l,next){
+  if(l.kind==="text")return;
   ensureImageRect(l);
   const prev=l.imageZoom||1,newZoom=Math.max(.25,Math.min(6,next)),ratio=newZoom/prev;
   const cx=l.x+l.w/2,cy=l.y+l.h/2,a=l.imageRect;
@@ -298,7 +512,7 @@ $("layerDown").onclick=()=>mutate(l=>{const i=layers.indexOf(l);if(i>0)[layers[i
 $("delete").onclick=()=>mutate(l=>{layers=layers.filter(a=>a.id!==l.id);selected=null});
 $("duplicate").onclick=()=>mutate(l=>{const copy={...l,id:"layer-"+(++seq),name:l.name+" 副本",x:l.x+22,y:l.y+22,imageRect:l.imageRect?{...l.imageRect,x:l.imageRect.x+22,y:l.imageRect.y+22}:null};layers.push(copy);selected=copy.id});
 $("stage").addEventListener("pointerdown",startDrag);$("stage").addEventListener("pointermove",moveDrag);$("stage").addEventListener("pointerup",endDrag);$("stage").addEventListener("pointercancel",endDrag);
-window.addEventListener("keydown",e=>{if(!$("saveSheet").hidden)return;const t=e.target;if(t.matches("input,textarea,select"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo();return}const l=get();if(!l)return;if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();$("delete").click()}if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();mutate(x=>{const d=e.shiftKey?10:1,dx=e.key==="ArrowLeft"?-d:e.key==="ArrowRight"?d:0,dy=e.key==="ArrowUp"?-d:e.key==="ArrowDown"?d:0;if(cropMode){ensureImageRect(x);x.imageRect.x+=dx;x.imageRect.y+=dy}else{x.x+=dx;x.y+=dy;if(x.imageRect){x.imageRect.x+=dx;x.imageRect.y+=dy}}})}});
+window.addEventListener("keydown",e=>{if(!$("saveSheet").hidden)return;const t=e.target;if(t.matches("input,textarea,select"))return;if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==="z"){e.preventDefault();e.shiftKey?redo():undo();return}const l=get();if(!l)return;if(e.key==="Delete"||e.key==="Backspace"){e.preventDefault();$("delete").click()}if(["ArrowUp","ArrowDown","ArrowLeft","ArrowRight"].includes(e.key)){e.preventDefault();mutate(x=>{const d=e.shiftKey?10:1,dx=e.key==="ArrowLeft"?-d:e.key==="ArrowRight"?d:0,dy=e.key==="ArrowUp"?-d:e.key==="ArrowDown"?d:0;if(cropMode&&x.kind!=="text"){ensureImageRect(x);x.imageRect.x+=dx;x.imageRect.y+=dy}else{x.x+=dx;x.y+=dy;if(x.imageRect){x.imageRect.x+=dx;x.imageRect.y+=dy}}})}});
 $("undo").onclick=undo;$("redo").onclick=redo;
 let saveObjectUrl=null,saveName="";
 function closeSaveSheet(){
@@ -344,6 +558,6 @@ background={...bg,width:1000,height:700,name:"QRPatch demo poster"};const id="as
 $("bgDrop").onclick=$("start").onclick=()=>$("bgInput").click();$("addDrop").onclick=()=>$("assetInput").click();$("bgInput").onchange=e=>setBackground(e.target.files[0]);$("assetInput").onchange=e=>addFiles([...e.target.files]);
 for(const id of ["bgDrop","addDrop"]){$(id).onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();$(id).click()}}}
 const area=$("canvasArea");area.addEventListener("dragover",e=>{e.preventDefault();area.classList.add("dragover")});area.addEventListener("dragleave",()=>area.classList.remove("dragover"));area.addEventListener("drop",e=>{e.preventDefault();area.classList.remove("dragover");const list=[...e.dataTransfer.files].filter(f=>f.type.startsWith("image/"));if(background)addFiles(list);else setBackground(list[0])});
-$("showSettings").onclick=()=>$("settings").classList.add("open");$("closeSettings").onclick=()=>$("settings").classList.remove("open");window.addEventListener("resize",layout);placeMobileToolbars();if(new URLSearchParams(location.search).has("qa"))window.QRPatchQA={snapshot:()=>({cropMode,backgroundSelected,bgEdits:{...bgEdits},background:background?{width:background.width,height:background.height}:null,selected,layers:layers.map(l=>({id:l.id,name:l.name,kind:l.kind,shape:l.shape,x:l.x,y:l.y,w:l.w,h:l.h,imageRect:l.imageRect?{...l.imageRect}:null,imageZoom:l.imageZoom||1,backing:l.backing,padding:l.padding}))})};updateHistory();
+$("showSettings").onclick=()=>$("settings").classList.add("open");$("closeSettings").onclick=()=>$("settings").classList.remove("open");window.addEventListener("resize",layout);placeMobileToolbars();if(new URLSearchParams(location.search).has("qa"))window.QRPatchQA={snapshot:()=>({cropMode,backgroundSelected,bgEdits:{...bgEdits},background:background?{width:background.width,height:background.height}:null,selected,layers:layers.map(l=>({id:l.id,name:l.name,kind:l.kind,shape:l.shape,x:l.x,y:l.y,w:l.w,h:l.h,imageRect:l.imageRect?{...l.imageRect}:null,imageZoom:l.imageZoom||1,backing:l.backing,padding:l.padding,text:l.text||null,textStyle:l.textStyle||null,color:l.color||null,baseW:l.baseW||null,baseH:l.baseH||null,lock:l.lock,visible:l.visible}))})};updateHistory();
 })();
 </script></body></html>

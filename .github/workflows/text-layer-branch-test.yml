@@ -1,0 +1,39 @@
+name: QRPatch text layer branch QA (no deploy)
+on:
+  push:
+    branches:
+      - feat/text-annotation-layers
+
+permissions:
+  contents: read
+
+jobs:
+  test-only:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Checkout development branch
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install Chromium for browser tests
+        run: |
+          python -m pip install playwright
+          python -m playwright install --with-deps chromium
+      - name: Verify transform math
+        run: node tests/transform-contract.mjs
+      - name: Verify existing editor
+        run: python scripts/browser-qa.py
+      - name: Verify existing mobile layout and download
+        run: python scripts/mobile-qa.py
+      - name: Verify text layers on desktop and mobile
+        run: python scripts/text-qa.py
+      - name: Save real desktop/mobile text editor screenshots (test artifact only)
+        uses: actions/upload-artifact@v4
+        with:
+          name: qrpatch-text-layer-preview
+          path: tests/out/*.png
+          if-no-files-found: error
+
