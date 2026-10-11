@@ -1,5 +1,15 @@
 # Changelog
 
+## [Unreleased] — In-canvas text editing UX (2026-10-11)
+
+- Removed the explanatory microcopy under the five typography presets in the left sidebar; styles now demonstrate themselves visually.
+- Replaced the nonfunctional text-layer mini-toolbar with **编辑文字 / 样式 / 颜色 / ⋯** contextual actions for selected text.
+- Text can be edited again after placement; switching styles/colors immediately updates the canvas while preserving the original layout center and proportional scale.
+- Invalid empty or >4-line text remains in the editor with visible feedback, not silently truncated.
+- Preserved QR/image crop toolbar behavior, right-side precise inspector, duplicate/delete, undo/redo and original-resolution PNG export.
+- Added desktop and mobile automated coverage for contextual text edit/color/style operations.
+
+
 ## [Unreleased] — Mobile PNG download simplification (2026-10-11)
 
 - Removed `分享 / 存到相册` from the mobile export sheet because WeChat can block system sharing.
