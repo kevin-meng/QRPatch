@@ -126,15 +126,15 @@ def verify_presets_and_mobile(browser,url,w,h):
 
 def main():
     handler=functools.partial(QuietHandler,directory=str(ROOT))
-    http=http.server.ThreadingHTTPServer(("127.0.0.1",0),handler)
-    threading.Thread(target=http.serve_forever,daemon=True).start()
+    server=http.server.ThreadingHTTPServer(("127.0.0.1",0),handler)
+    threading.Thread(target=server.serve_forever,daemon=True).start()
     try:
         with sync_playwright() as p:
             browser=p.chromium.launch(headless=True)
-            url=f"http://127.0.0.1:{http.server_port}/index.html"
+            url=f"http://127.0.0.1:{server.server_port}/index.html"
             verify_desktop(browser,url)
             for w,h in [(390,844),(320,720)]:
                 verify_presets_and_mobile(browser,url,w,h)
             browser.close()
-    finally:http.shutdown();http.server_close()
+    finally:server.shutdown();server.server_close()
 if __name__=="__main__":main()
