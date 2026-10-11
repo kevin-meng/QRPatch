@@ -24,6 +24,14 @@ AI image generators can produce beautiful posters, but the QR codes they draw ar
 
 To explore the workspace without uploading a private image, select **体验示例画布** on the opening screen. Its example QR-like pattern is decorative and **not scannable**.
 
+## Contextual editing tools
+
+Select a QR or image to get the nearby floating toolbar: **整体 / 裁切 / 形状 ▾ / 图片 − ＋ / ⋯**. Choose square, rounded or circle in the shape popup; **⋯** holds white backing, duplicate and delete. Detailed coordinates and safe padding remain in the inspector.
+
+Click an empty portion of the poster to select the background. Its own floating toolbar provides **replace background**, **brightness and contrast**, and **reset**. Image color grading applies to the background only, never to QR/image overlays. Replacing a same-sized backdrop keeps existing overlays; different dimensions require confirmation.
+
+[Contextual toolbar design](docs/UX_CONTEXT_TOOLBAR_20261011.md).
+
 ## Two clear editing modes
 
 1. **整体 (Whole layer):** Drag to move the layer. Drag a corner to resize the mask **and** its image together, preserving the chosen crop.
@@ -55,7 +63,7 @@ For real QR codes, prefer a square mask, uncut locator patterns, and a white qui
 
 QRPatch includes a real, self-running browser test suite that exercises the deployed editor with an in-memory QR fixture, pointer dragging, both editing modes and a PNG export.
 
-**[Run the interactive browser QA](https://qrpatch-studio.onrender.com/tests/browser-qa.html)** — most recent observed result: **15 PASS · 0 FAIL · 1 SKIP**. All **841 / 841 QR modules** were preserved in the exported PNG. The skipped case is native QR decoding, which requires `BarcodeDetector` support or an external scanner.
+**[Run the interactive browser QA](https://qrpatch-studio.onrender.com/tests/browser-qa.html)** — most recent observed result: **20 PASS · 0 FAIL · 1 SKIP**. All **841 / 841 QR modules** were preserved in the exported PNG. The skipped case is native QR decoding, which requires `BarcodeDetector` support or an external scanner.
 
 The geometry transform contract also runs without dependencies:
 
