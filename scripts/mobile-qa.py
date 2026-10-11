@@ -61,7 +61,9 @@ def verify_mobile(browser, url: str, width: int, height: int) -> None:
     check_toolbar("#bgTools")
     page.locator("#bgAdjust").click()
     page.locator("#bgPopover:visible").wait_for()
-    page.locator("#bgContrast").fill("118")
+    page.locator("#bgContrast").evaluate(
+        """(el) => {el.value='118'; el.dispatchEvent(new Event('input',{bubbles:true})); el.dispatchEvent(new Event('change',{bubbles:true}));}"""
+    )
     page.locator("#bgAdjust").click()
 
     # Mobile export should open a full-resolution image preview with
