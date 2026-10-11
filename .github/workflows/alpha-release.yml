@@ -57,7 +57,7 @@ jobs:
 
       - name: Tag tested alpha snapshot
         run: |
-          tag="v0.1.0-alpha.3"
+          tag="v0.1.0-alpha.4"
           if git ls-remote --tags origin "refs/tags/$tag" | grep -q "refs/tags/$tag"; then
             echo "Alpha tag exists; retaining the existing immutable release"
           else
