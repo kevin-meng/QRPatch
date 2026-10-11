@@ -266,7 +266,7 @@ function drawTextSelection(g,l){
 function addTextLayer(){
  if(!background){status("请先上传背景图，再添加文字");return}
  const content=$("textContent").value.trim();if(!content){$("textContent").focus();status("请先输入文字");return}
- if(content.split("\\n").length>4){$("textContent").focus();status("文字最多支持 4 行，请精简后再添加");return}
+ if(content.split("\n").length>4){$("textContent").focus();status("文字最多支持 4 行，请精简后再添加");return}
  const geom=measureTextGeometry(content,chosenTextStyle);
  const factor=Math.min(1,background.width*.68/geom.baseW,background.height*.30/geom.baseH);
  const w=Math.max(10,geom.baseW*factor),h=Math.max(10,geom.baseH*factor);
@@ -298,7 +298,7 @@ $("textEditContent").onchange=e=>{
  const l=get();if(!l||l.kind!=="text")return;
  const value=e.target.value.trim();
  if(!value){e.target.value=l.text;status("文字不能留空");return}
- if(value.split("\\n").length>4){e.target.value=l.text;status("文字最多支持 4 行，请精简后再更新");return}
+ if(value.split("\n").length>4){e.target.value=l.text;status("文字最多支持 4 行，请精简后再更新");return}
  if(value===l.text)return;
  mutate(x=>{
   const oldBaseW=x.baseW,oldBaseH=x.baseH;
