@@ -109,7 +109,7 @@ def verify_presets_and_mobile(browser,url,w,h):
         p.locator("#textContent").fill("扫码报名")
         p.locator(f'#textStyles [data-text-style="{style}"]').click()
         p.locator("#addText").click()
-        p.wait_for_function("(style) => window.QRPatchQA.snapshot().layers.at(-1).textStyle===style",style)
+        p.wait_for_function("(style) => window.QRPatchQA.snapshot().layers.at(-1).textStyle===style",arg=style)
         assert selected_text(p)["textStyle"]==style
         assert not p.locator("#quickShape").is_visible()
     assert len([x for x in snapshot(p)["layers"] if x["kind"]=="text"])==5
