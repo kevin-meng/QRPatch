@@ -1,5 +1,19 @@
 # Changelog
 
+## [v0.1.0-alpha.3] — Mobile editing & export (2026-10-11)
+
+### Fixed
+- Mobile contextual toolbar no longer follows the small scaled poster image to narrow or clipped positions; it docks at the bottom of the editing area and wraps controls into two touch-friendly rows.
+- Shape, background and more-action popovers open above the docked toolbar.
+- Touch resize corners use a larger capture radius on phone-size screens.
+- Mobile PNG export presents an image preview with native PNG file-share, long-press image save and browser-download fallbacks, plus clear iOS Photos and Android guidance.
+- Desktop direct PNG download remains unchanged.
+
+### Verified
+- Both **390×844** and **320×720** Chromium mobile emulations: image toolbar, crop shape, background settings, 1000×700 PNG preview and actual PNG download passed.
+- Original desktop geometry and E2E tests passed in the same alpha.3 release pipeline.
+- Native iOS Safari/WeChat saving to Photos requires a device-side check: no webpage can universally save files directly to the Photos library.
+
 ## [Unreleased] — Contextual toolbar iteration (2026-10-11)
 
 ### Changed
