@@ -94,7 +94,7 @@ def verify_desktop(browser, url):
     p.locator("#quickTextEdit").click()
     assert p.locator("#textEditPopover").is_visible()
     assert p.locator("#quickTextValue").input_value()=="立即扫码报名"
-    p.locator("#quickTextValue").fill("一\\n二\\n三\\n四\\n五".replace("\\\\n","\\n"))
+    p.locator("#quickTextValue").fill(chr(10).join(["一","二","三","四","五"]))
     p.locator("#quickTextApply").click()
     assert p.locator("#textEditPopover").is_visible(), "Validation failure must keep editor open"
     assert "最多支持 4 行" in p.locator("#textEditFeedback").inner_text()
